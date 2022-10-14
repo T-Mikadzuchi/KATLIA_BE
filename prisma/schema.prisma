@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model color {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  color   String
+  colorId Int @unique
+  hex     String
+}
+
+model customer {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model customer_address {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model image {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  colorId   Int
+  imageId   BigInt
+  productId Int
+  url       String
+}
+
+model storage_import {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model import_detail {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model order_detail {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model order_item {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model payment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model product {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId  Int
+  description String
+  discountId  String
+  isDeleted   Int
+  name        String
+  price       Float
+  productId   Int @unique
+  sold        Int
+}
+
+model product_category {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  category   String
+  categoryId Int @unique
+  gender     String
+}
+
+model product_detail {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  colorId   Int
+  productId Int
+  quantity  Int
+  size      String
+}
+
+model product_discount {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model staff {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model user {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  password String
+  role Role @default(CUSTOMER)
+  gender Gender @default(OTHER)
+  fullName String?
+  phoneNumber String?
+  birthday DateTime?
+  accessFailedAccount Boolean @default(false)
+  ava String?
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+  SALES
+  STAFF
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model voucher {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
