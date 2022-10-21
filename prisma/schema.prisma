@@ -118,5 +118,7 @@ model voucher {
 model mail_otp {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   email String @unique
+  password String?
+  name String?
   otp Int
 }
