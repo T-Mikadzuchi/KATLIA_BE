@@ -16,6 +16,8 @@ model color {
 
 model customer {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique
+  totalPurchaseAmount Float @default(0)
 }
 
 model customer_address {
@@ -83,6 +85,9 @@ model product_discount {
 
 model staff {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique
+  startAt DateTime @default(now())
+  status Int @default(1)
 }
 
 model user {

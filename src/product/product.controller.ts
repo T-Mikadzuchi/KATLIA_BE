@@ -9,4 +9,10 @@ export class ProductController {
     gender = gender.toLowerCase();
     return this.productService.getProductByGender(gender);
   }
+
+  @Get('getProductByCategoryId/:categoryId')
+  getProductByCategoryId(@Param('categoryId') categoryId: number) {
+    console.log(categoryId)
+    return this.productService.getProductByCategoryId(categoryId)
+  }
 }

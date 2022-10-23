@@ -54,4 +54,12 @@ export class ProductService {
     }
     return productList;
   }
+
+  async getProductByCategoryId(categoryId: number) {
+    const category = await this.prismaService
+    const productList: any[] = []
+    await this.displayProductListByCategory(categoryId, productList)
+    console.log(productList.length)
+    return productList
+  }
 }

@@ -33,6 +33,12 @@ export class AuthService {
           },
         });
 
+        await this.prisma.customer.create({
+          data: {
+            userId: user.id,
+          },
+        });
+
         await this.prisma.mail_otp.delete({
           where: {
             email: dto.email,
@@ -78,7 +84,7 @@ export class AuthService {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '30m',
+      expiresIn: '24h',
       secret: secret,
     });
     return {
@@ -97,11 +103,18 @@ export class AuthService {
       return new ForbiddenException('Credential taken');
     }
 
-    await this.prisma.mail_otp.delete({
+    const mailOTP = await this.prisma.mail_otp.findUnique({
       where: {
         email: dto.email,
       },
     });
+
+    if (mailOTP)
+      await this.prisma.mail_otp.delete({
+        where: {
+          email: dto.email,
+        },
+      });
 
     await this.mailerService.sendMail({
       to: dto.email,
