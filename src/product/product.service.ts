@@ -14,6 +14,7 @@ export class ProductService {
         name: true,
         price: true,
         discountId: true,
+        sold: true,
       },
     });
     for (const product of findProduct) {
@@ -29,6 +30,7 @@ export class ProductService {
         colorNumber: productColor.length,
         price: product.price,
         discountId: product.discountId,
+        sold: product.sold,
       });
     }
   }
@@ -36,7 +38,7 @@ export class ProductService {
   async getProductByGender(gender: string) {
     const categoryList = await this.prismaService.product_category.findMany({
       where: {
-        gender: gender
+        gender: gender,
       },
       select: {
         categoryId: true,
@@ -48,18 +50,34 @@ export class ProductService {
       colorNumber: number;
       price: number;
       discountId: string;
+      sold: number;
     }[] = [];
     for (const category of categoryList) {
-      await this.displayProductListByCategory(category, productList)
+      await this.displayProductListByCategory(category, productList);
     }
     return productList;
   }
 
-  async getProductByCategoryId(categoryId: number) {
-    const category = await this.prismaService
-    const productList: any[] = []
-    await this.displayProductListByCategory(categoryId, productList)
-    console.log(productList.length)
-    return productList
+  async getProductByCategoryId(categoryId: any) {
+    categoryId = parseInt(categoryId)
+    const category = await this.prismaService.product_category.findUnique({
+      where: {
+        categoryId: categoryId,
+      },
+    });
+    const productList: any[] = [];
+    await this.displayProductListByCategory(category, productList);
+    console.log(productList.length);
+    return productList;
+  }
+
+  async getTop4(gender: string) {
+    const products = await this.getProductByGender(gender);
+    const top4 = await products
+      .sort((a, b) => {
+        return b.sold - a.sold;
+      })
+      .slice(0, 4);
+    return top4;
   }
 }

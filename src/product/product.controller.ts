@@ -11,8 +11,13 @@ export class ProductController {
   }
 
   @Get('getProductByCategoryId/:categoryId')
-  getProductByCategoryId(@Param('categoryId') categoryId: number) {
-    console.log(categoryId)
+  getProductByCategoryId(@Param('categoryId') categoryId: any) {
     return this.productService.getProductByCategoryId(categoryId)
+  }
+
+  @Get('getTop4/:gender')
+  getTop4(@Param('gender') gender: string) {
+    gender = gender.toLowerCase();
+    return this.productService.getTop4(gender);
   }
 }
