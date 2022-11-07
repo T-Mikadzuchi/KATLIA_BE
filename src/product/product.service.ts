@@ -4,10 +4,10 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class ProductService {
   constructor(private prismaService: PrismaService) {}
-  async displayProductListByCategory(category: any, productList: any) {
+  async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {
-        categoryId: category.categoryId,
+        categoryId,
       },
       select: {
         productId: true,
@@ -53,21 +53,15 @@ export class ProductService {
       sold: number;
     }[] = [];
     for (const category of categoryList) {
-      await this.displayProductListByCategory(category, productList);
+      const categoryId = category.categoryId
+      await this.displayProductListByCategory(categoryId, productList);
     }
     return productList;
   }
 
-  async getProductByCategoryId(categoryId: any) {
-    categoryId = parseInt(categoryId)
-    const category = await this.prismaService.product_category.findUnique({
-      where: {
-        categoryId: categoryId,
-      },
-    });
+  async getProductByCategoryId(categoryId: number) {
     const productList: any[] = [];
-    await this.displayProductListByCategory(category, productList);
-    console.log(productList.length);
+    await this.displayProductListByCategory(categoryId, productList);
     return productList;
   }
 

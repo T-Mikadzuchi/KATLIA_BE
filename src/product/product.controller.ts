@@ -11,7 +11,8 @@ export class ProductController {
   }
 
   @Get('getProductByCategoryId/:categoryId')
-  getProductByCategoryId(@Param('categoryId') categoryId: any) {
+  getProductByCategoryId(@Param('categoryId') categoryId: number) {
+    categoryId = parseInt(categoryId.toString())
     return this.productService.getProductByCategoryId(categoryId)
   }
 
