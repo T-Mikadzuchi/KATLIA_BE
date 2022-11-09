@@ -150,6 +150,10 @@ export class ProductService {
         productId: id
       }
     })
+    if (!selected) {
+      throw new ForbiddenException("Product does not exist")
+    }
+    
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId: selected.categoryId,
