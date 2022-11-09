@@ -21,4 +21,16 @@ export class ProductController {
     gender = gender.toLowerCase();
     return this.productService.getTop4(gender);
   }
+
+  @Get('getProductDetail/:id')
+  getProductDetail(@Param('id') id: number) {
+    id = parseInt(id.toString())
+    return this.productService.getProductDetail(id)
+  }
+
+  @Get('get4SimilarItems/:id') 
+  get4SimilarItems(@Param('id') id: number) {
+    id = parseInt(id.toString())
+    return this.productService.get4SimilarItems(id)
+  }
 }
