@@ -75,6 +75,7 @@ model order_item {
   currentPrice Float
   productId Int
   size String
+  colorId Int
   quantity Int
   currentSalesPrice Float
 }

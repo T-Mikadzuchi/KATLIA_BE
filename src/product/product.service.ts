@@ -33,6 +33,7 @@ export class ProductService {
     }
     return salePrice
   }
+  
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {

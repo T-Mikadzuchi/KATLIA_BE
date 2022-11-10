@@ -9,4 +9,7 @@ export class CartDto {
 
   @ApiProperty()
   size: string;
+
+  @ApiProperty()
+  quantity: number;
 }
