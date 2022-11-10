@@ -42,10 +42,41 @@ model import_detail {
 
 model order_detail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  staffId String
+  voucherId String
+  customerId String
+  shippingFee Float
+  paymentId String
+  status OrderStatus
+  createdAt DateTime
+  completedAt DateTime
+  address String
+  ward String
+  district String
+  city String
+  receiverName String
+  receiverPhone String
+  note String
+}
+
+enum OrderStatus {
+  CART
+  PLACED
+  PACKING
+  SHIPPING
+  ARRIVED
+  PAID
+  CANCELED
 }
 
 model order_item {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String
+  currentPrice Float
+  productId Int
+  size String
+  quantity Int
+  currentSalesPrice Float
 }
 
 model payment {
@@ -81,6 +112,10 @@ model product_detail {
 
 model product_discount {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  discountName String
+  percent Float
+  startAt DateTime
+  endAt DateTime
 }
 
 model staff {

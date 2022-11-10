@@ -14,6 +14,25 @@ export class ProductService {
     return productColor
   }
 
+  async setSalePrice(product: any) {
+    let salePrice: number = null;
+    if (product.discountId) {
+      console.log(product)
+      const discount = await this.prismaService.product_discount.findFirst({
+        where: {
+          id: product.discountId,
+          startAt: {
+            lte: new Date()
+          },
+          endAt: {
+            gte: new Date()
+          }
+        },
+      })
+      if (discount) salePrice = product.price * (1 - discount.percent)
+    }
+    return salePrice
+  }
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {
@@ -28,6 +47,7 @@ export class ProductService {
       },
     });
     for (const product of findProduct) {
+      const salePrice = await this.setSalePrice(product)
       const productColor = await this.getProductColors(product.productId)
       productList.push({
         id: product.productId,
@@ -36,6 +56,7 @@ export class ProductService {
         price: product.price,
         discountId: product.discountId,
         sold: product.sold,
+        salePrice: salePrice
       });
     }
   }
@@ -136,9 +157,11 @@ export class ProductService {
       })
     }
 
+    const salePrice = await this.setSalePrice(product)
     return {
       name: product.name,
       price: product.price,
+      salePrice,
       description: product.description,
       colorList,
     }

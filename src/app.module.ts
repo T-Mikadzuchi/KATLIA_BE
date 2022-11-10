@@ -1,3 +1,4 @@
+import { CartModule } from './cart/cart.module';
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -6,6 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
 import { MailModule } from './mail/mail.module';
 import { CategoryModule } from './category/category.module';
+import { DiscountModule } from './admin/discount/discount.module';
+import { ProductAdminModule } from './admin/product_admin/product_admin.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -18,6 +22,10 @@ import { CategoryModule } from './category/category.module';
     ProductModule,
     MailModule,
     CategoryModule,
+    CartModule,
+    DiscountModule,
+    ProductAdminModule,
+    AdminModule
   ],
 })
 export class AppModule {}
