@@ -11,39 +11,40 @@ export class ProductService {
         productId,
       },
     });
-    return productColor
+    return productColor;
   }
 
   async setSalePrice(product: any) {
     let salePrice: number = null;
     if (product.discountId) {
-      console.log(product)
+      console.log(product);
       const discount = await this.prismaService.product_discount.findFirst({
         where: {
           id: product.discountId,
           startAt: {
-            lte: new Date()
+            lte: new Date(),
           },
           endAt: {
-            gte: new Date()
-          }
+            gte: new Date(),
+          },
         },
-      })
-      if (discount) salePrice = product.price * (1 - discount.percent)
+      });
+      if (discount) salePrice = product.price * (1 - discount.percent);
     }
-    return salePrice
+    return salePrice;
   }
 
   async getThumbnailImageUrl(product: any) {
     const image = await this.prismaService.image.findFirst({
       where: {
-        productId: product.productId
-      }
-    })
-    if (!image) return null
-    return image.url.replace("//", "")
+        productId: product.productId,
+      },
+    });
+    if (!image) return null;
+    if (image.url.startsWith('//')) return 'https:' + image.url;
+    return image.url
   }
-  
+
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {
@@ -58,8 +59,8 @@ export class ProductService {
       },
     });
     for (const product of findProduct) {
-      const salePrice = await this.setSalePrice(product)
-      const productColor = await this.getProductColors(product.productId)
+      const salePrice = await this.setSalePrice(product);
+      const productColor = await this.getProductColors(product.productId);
       productList.push({
         id: product.productId,
         name: product.name,
@@ -68,7 +69,7 @@ export class ProductService {
         discountId: product.discountId,
         sold: product.sold,
         salePrice: salePrice,
-        image: await this.getThumbnailImageUrl(product)
+        image: await this.getThumbnailImageUrl(product),
       });
     }
   }
@@ -91,7 +92,7 @@ export class ProductService {
       sold: number;
     }[] = [];
     for (const category of categoryList) {
-      const categoryId = category.categoryId
+      const categoryId = category.categoryId;
       await this.displayProductListByCategory(categoryId, productList);
     }
     return productList;
@@ -116,48 +117,48 @@ export class ProductService {
   async getProductDetail(id: number) {
     const product = await this.prismaService.product.findUnique({
       where: {
-        productId: id
-      }
-    })
+        productId: id,
+      },
+    });
     if (!product) {
-      throw new ForbiddenException("Product does not exist")
+      throw new ForbiddenException('Product does not exist');
     }
 
-    const productColors = await this.getProductColors(product.productId)
+    const productColors = await this.getProductColors(product.productId);
 
-    const colorList: any[] = []
+    const colorList: any[] = [];
     for (const prodColor of productColors) {
       const color = await this.prismaService.color.findUnique({
         where: {
           colorId: prodColor.colorId,
-        }
-      })
+        },
+      });
 
-      const details: any[] = []
+      const details: any[] = [];
       const productDetail = await this.prismaService.product_detail.findMany({
         where: {
           productId: prodColor.productId,
-          colorId: prodColor.colorId
-        }
-      })
+          colorId: prodColor.colorId,
+        },
+      });
       for (const detail of productDetail) {
         details.push({
           size: detail.size,
-          quantity: detail.quantity
-        })
+          quantity: detail.quantity,
+        });
       }
 
-      const imgList: any[] = []
+      const imgList: any[] = [];
       const images = await this.prismaService.image.findMany({
         where: {
           productId: prodColor.productId,
-          colorId: prodColor.colorId
-        }
-      })
+          colorId: prodColor.colorId,
+        },
+      });
       for (const image of images) {
         imgList.push({
-          url: image.url.replace("//", ""),
-        })
+          url: image.url.replace('//', ''),
+        });
       }
 
       colorList.push({
@@ -166,38 +167,38 @@ export class ProductService {
         hex: color.hex,
         imgList,
         details,
-      })
+      });
     }
 
-    const salePrice = await this.setSalePrice(product)
+    const salePrice = await this.setSalePrice(product);
     return {
       name: product.name,
       price: product.price,
       salePrice,
       description: product.description,
       colorList,
-    }
+    };
   }
 
   async get4SimilarItems(id: number) {
     const selected = await this.prismaService.product.findUnique({
       where: {
-        productId: id
-      }
-    })
+        productId: id,
+      },
+    });
     if (!selected) {
-      throw new ForbiddenException("Product does not exist")
+      throw new ForbiddenException('Product does not exist');
     }
-    
+
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId: selected.categoryId,
       },
-      take: 4
+      take: 4,
     });
-    const productList: any[] = []
+    const productList: any[] = [];
     for (const product of findProduct) {
-      const productColor = await this.getProductColors(product.productId)
+      const productColor = await this.getProductColors(product.productId);
       productList.push({
         id: product.productId,
         name: product.name,
@@ -205,9 +206,9 @@ export class ProductService {
         price: product.price,
         discountId: product.discountId,
         sold: product.sold,
-        image: await this.getThumbnailImageUrl(product)
+        image: await this.getThumbnailImageUrl(product),
       });
     }
-    return productList
+    return productList;
   }
 }
