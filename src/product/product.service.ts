@@ -42,7 +42,7 @@ export class ProductService {
     });
     if (!image) return null;
     if (image.url.startsWith('//')) return 'https:' + image.url;
-    return image.url
+    return image.url;
   }
 
   async displayProductListByCategory(categoryId: number, productList: any) {
@@ -156,8 +156,11 @@ export class ProductService {
         },
       });
       for (const image of images) {
+        let url: string = null;
+        if (image.url.startsWith('//')) url = 'https:' + image.url;
+        else url = image.url;
         imgList.push({
-          url: image.url.replace('//', ''),
+          url,
         });
       }
 
