@@ -175,6 +175,7 @@ export class ProductService {
 
     const salePrice = await this.setSalePrice(product);
     return {
+      id,
       name: product.name,
       price: product.price,
       salePrice,

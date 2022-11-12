@@ -32,6 +32,7 @@ export class DiscountService {
     });
     return checkDiscount;
   }
+
   async addNewDiscount(user: user, dto: DiscountDto) {
     if (!(await this.adminService.isAdmin(user)))
       throw new ForbiddenException('Permission denied');
@@ -45,7 +46,7 @@ export class DiscountService {
       );
     }
     if (Date.parse(dto.startAt.toString()) <= Date.now())
-      throw new ForbiddenException('Only add future promotion');
+      throw new ForbiddenException('Only add future discount');
 
     // const checkDiscount = await this.checkDiscount(dto);
     // if (checkDiscount)
@@ -60,5 +61,34 @@ export class DiscountService {
       },
     });
     return newDiscount;
+  }
+
+  async getAllDiscountList(user: user) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const discountList = await this.prismaService.product_discount.findMany();
+    const discountResult: any[] = [];
+    for (const discount of discountList) {
+      let status = 'current';
+      let message = 'Only edit discount product list';
+      if (discount.endAt < new Date()) {
+        status = 'ended';
+        message = "Can't edit";
+      } else if (discount.startAt > new Date()) {
+        status = 'upcoming';
+        message = 'Can edit';
+      }
+      discountResult.push({
+        id: discount.id,
+        discountName: discount.discountName,
+        percent: discount.percent,
+        startAt: discount.startAt,
+        endAt: discount.endAt,
+        status,
+        message,
+      });
+    }
+    return discountResult;
   }
 }

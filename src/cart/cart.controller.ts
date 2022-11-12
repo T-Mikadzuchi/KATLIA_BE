@@ -1,5 +1,5 @@
 import { CartService } from './cart.service';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator';
@@ -14,6 +14,11 @@ export class CartController {
 
   @Post('addItemToCart')
   addItemToCart(@GetUser() user: user, @Body() dto: CartDto) {
-    return this.cartService.addItemToCart(user, dto)
+    return this.cartService.addItemToCart(user, dto);
+  }
+
+  @Get('getCart')
+  getCart(@GetUser() user: user) {
+    return this.cartService.getCart(user);
   }
 }
