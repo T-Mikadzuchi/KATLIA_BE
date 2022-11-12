@@ -33,6 +33,16 @@ export class ProductService {
     }
     return salePrice
   }
+
+  async getThumbnailImageUrl(product: any) {
+    const image = await this.prismaService.image.findFirst({
+      where: {
+        productId: product.productId
+      }
+    })
+    if (!image) return null
+    return image.url.replace("//", "")
+  }
   
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
@@ -57,7 +67,8 @@ export class ProductService {
         price: product.price,
         discountId: product.discountId,
         sold: product.sold,
-        salePrice: salePrice
+        salePrice: salePrice,
+        image: await this.getThumbnailImageUrl(product)
       });
     }
   }
@@ -194,6 +205,7 @@ export class ProductService {
         price: product.price,
         discountId: product.discountId,
         sold: product.sold,
+        image: await this.getThumbnailImageUrl(product)
       });
     }
     return productList
