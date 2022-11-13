@@ -9,6 +9,10 @@ export class CategoryService {
       where: {
         gender: gender,
       },
+      select: {
+        category: true,
+        categoryId: true
+      }
     });
     return categoryList;
   }

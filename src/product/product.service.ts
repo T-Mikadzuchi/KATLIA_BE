@@ -53,21 +53,24 @@ export class ProductService {
         productId: true,
         name: true,
         price: true,
-        discountId: true,
         sold: true,
       },
     });
     for (const product of findProduct) {
-      const salePrice = await this.setSalePrice(product);
-      const productColor = await this.getProductColors(product.productId);
+      const productColor = await this.prismaService.product_detail.findMany({
+        distinct: ['colorId', 'productId'],
+        where: {
+          productId: product.productId,
+        },
+      });
+
       productList.push({
         id: product.productId,
         name: product.name,
         colorNumber: productColor.length,
         price: product.price,
-        discountId: product.discountId,
         sold: product.sold,
-        salePrice: salePrice,
+        salePrice: await this.setSalePrice(product),
         image: await this.getThumbnailImageUrl(product),
       });
     }
@@ -87,6 +90,8 @@ export class ProductService {
       const categoryId = category.categoryId;
       await this.displayProductListByCategory(categoryId, productList);
     }
+
+    console.log(productList.length);
     return productList;
   }
 
@@ -97,12 +102,16 @@ export class ProductService {
   }
 
   async getTop4(gender: string) {
+    const startTime = performance.now();
+
     const products = await this.getProductByGender(gender);
     const top4 = await products
       .sort((a, b) => {
         return b.sold - a.sold;
       })
       .slice(0, 4);
+    const endTime = performance.now();
+    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
     return top4;
   }
 
