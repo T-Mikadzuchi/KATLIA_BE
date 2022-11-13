@@ -146,16 +146,6 @@ export class CartService {
         },
       });
 
-      const image = await this.prismaService.image.findFirst({
-        where: {
-          productId: product.productId,
-        },
-      });
-
-      let url = null;
-      if (!image) return null;
-      if (image.url.startsWith('//')) url = 'https:' + image.url;
-
       const salePrice = await this.productService.setSalePrice(product);
 
       const color = await this.prismaService.color.findUnique({
@@ -165,8 +155,9 @@ export class CartService {
       });
 
       itemList.push({
-        id: item.productId,
-        image: url,
+        id: item.id,
+        productId: item.productId,
+        image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + item.size,
         unit: product.price,
         unitSale: salePrice,
@@ -184,5 +175,68 @@ export class CartService {
 
     const cartItems = this.getCartItems(user, cart.id);
     return cartItems;
+  }
+
+  async cartValidation(user: user, id: string) {
+    try {
+      const cart = await this.findCart(user);
+      if (!cart) throw new ForbiddenException('wtf');
+
+      const cartItem = await this.prismaService.order_item.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      if (!cartItem) throw new ForbiddenException("Cart item doesn't exist");
+      if (cartItem.orderId != cart.id)
+        throw new ForbiddenException('Not your cart item');
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteCartItem(user: user, id: string) {
+    await this.cartValidation(user, id);
+    await this.prismaService.order_item.delete({
+      where: {
+        id: id,
+      },
+    });
+    return 'Item deleted';
+  }
+
+  async updateCartItem(user: user, id: string, number: number) {
+    await this.cartValidation(user, id);
+
+    if (number <= 0) throw new ForbiddenException("WTF quantity can't <=0");
+
+    const cartItem = await this.prismaService.order_item.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    const productDetail = await this.prismaService.product_detail.findFirst({
+      where: {
+        colorId: cartItem.colorId,
+        productId: cartItem.productId,
+        size: cartItem.size,
+      },
+      select: {
+        quantity: true,
+      },
+    });
+    if (number > productDetail.quantity)
+      throw new ForbiddenException('Product not available in quantity');
+
+    const updated = await this.prismaService.order_item.update({
+      where: {
+        id,
+      },
+      data: {
+        quantity: number,
+      },
+    });
+    return updated;
   }
 }
