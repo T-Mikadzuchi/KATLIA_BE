@@ -57,17 +57,11 @@ export class ProductService {
       },
     });
     for (const product of findProduct) {
-      const productColor = await this.prismaService.product_detail.findMany({
-        distinct: ['colorId', 'productId'],
-        where: {
-          productId: product.productId,
-        },
-      });
 
       productList.push({
         id: product.productId,
         name: product.name,
-        colorNumber: productColor.length,
+        // colorNumber: (await this.getProductColors(product.productId)).length,
         price: product.price,
         sold: product.sold,
         salePrice: await this.setSalePrice(product),
