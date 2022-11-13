@@ -11,6 +11,14 @@ export class ProductService {
         productId,
       },
     });
+    await this.prismaService.product.update({
+      where: {
+        productId: productId
+      },
+      data: {
+        colorNumber: productColor.length
+      }
+    })
     return productColor;
   }
 
@@ -33,16 +41,30 @@ export class ProductService {
     return salePrice;
   }
 
-  async getThumbnailImageUrl(product: any) {
-    const image = await this.prismaService.image.findFirst({
-      where: {
-        productId: product.productId,
-      },
-    });
-    if (!image) return null;
-    if (image.url.startsWith('//')) return 'https:' + image.url;
-    return image.url;
-  }
+  // async getThumbnailImageUrl(product: any) {
+  //   const image = await this.prismaService.image.findFirst({
+  //     where: {
+  //       productId: product.productId,
+  //     },
+  //   });
+  //   if (!image) {
+  //     console.log(product)
+  //     return null;
+  //   } 
+  //   // if (image.url.startsWith('//')) {
+  //     const imageUrl = 'https:' + image.url;
+  //     await this.prismaService.product.update({
+  //       where: {
+  //         productId: product.productId
+  //       },
+  //       data: {
+  //         defaultPic: imageUrl
+  //       }
+  //     })
+  //     return imageUrl;
+  //   // }
+  //   return image.url;
+  // }
 
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
@@ -54,18 +76,19 @@ export class ProductService {
         name: true,
         price: true,
         sold: true,
+        defaultPic: true,
+        colorNumber: true
       },
     });
     for (const product of findProduct) {
-
       productList.push({
         id: product.productId,
         name: product.name,
-        // colorNumber: (await this.getProductColors(product.productId)).length,
+        colorNumber: product.colorNumber,
         price: product.price,
         sold: product.sold,
         salePrice: await this.setSalePrice(product),
-        image: await this.getThumbnailImageUrl(product),
+        image: product.defaultPic,
       });
     }
   }
@@ -205,7 +228,7 @@ export class ProductService {
         price: product.price,
         discountId: product.discountId,
         sold: product.sold,
-        image: await this.getThumbnailImageUrl(product),
+        image: product.defaultPic,
       });
     }
     return productList;

@@ -27,7 +27,6 @@ model customer_address {
 model image {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   colorId   Int
-  imageId   BigInt
   productId Int
   url       String
 }
@@ -94,6 +93,8 @@ model product {
   price       Float
   productId   Int @unique
   sold        Int
+  defaultPic  String
+  colorNumber Int @default(1)
 }
 
 model product_category {
