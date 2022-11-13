@@ -17,7 +17,6 @@ export class ProductService {
   async setSalePrice(product: any) {
     let salePrice: number = null;
     if (product.discountId) {
-      console.log(product);
       const discount = await this.prismaService.product_discount.findFirst({
         where: {
           id: product.discountId,
@@ -83,14 +82,7 @@ export class ProductService {
         categoryId: true,
       },
     });
-    const productList: {
-      id: number;
-      name: string;
-      colorNumber: number;
-      price: number;
-      discountId: string;
-      sold: number;
-    }[] = [];
+    const productList: any[] = [];
     for (const category of categoryList) {
       const categoryId = category.categoryId;
       await this.displayProductListByCategory(categoryId, productList);
