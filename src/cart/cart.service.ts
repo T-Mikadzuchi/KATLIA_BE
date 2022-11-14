@@ -194,14 +194,14 @@ export class CartService {
       subtotal += item.total;
       afterSale += item.totalSale != null ? item.totalSale : 0;
     }
-    const discount = subtotal == afterSale ? 0 : subtotal - afterSale;
+    const discount = afterSale == 0 ? 0 : subtotal - afterSale;
     const ship = this.setShippingFee(count);
     return {
       cartItems,
       subtotal,
       discount,
       ship,
-      total: subtotal - afterSale + ship,
+      total: subtotal - discount + ship,
     };
   }
 
