@@ -80,11 +80,6 @@ export class CartService {
       });
       return existedItem;
     }
-    // const product = await this.prismaService.product.findUnique({
-    //   where: {
-    //     productId: dto.productId,
-    //   },
-    // });
 
     const checkProduct = await this.prismaService.product_detail.findFirst({
       where: {
@@ -161,7 +156,7 @@ export class CartService {
         name: product.name + ' - ' + color.color + ' - ' + item.size,
         unit: product.price,
         unitSale: salePrice,
-        quantiy: item.quantity,
+        quantity: item.quantity,
         total: product.price * item.quantity,
         totalSale: salePrice != null ? salePrice * item.quantity : null,
       });
@@ -169,12 +164,45 @@ export class CartService {
     return itemList;
   }
 
+  setShippingFee(count: number) {
+    let extra: number;
+    switch (Math.round(count / 4)) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        extra = 0;
+        break;
+      default:
+        extra = (Math.floor(count / 2) - 6) / 10;
+        break;
+    }
+    const ship: number = 1 + extra;
+    return ship;
+  }
+
   async getCart(user: user) {
     const cart = await this.findCart(user);
     if (!cart) throw new ForbiddenException('No cart');
 
-    const cartItems = this.getCartItems(user, cart.id);
-    return cartItems;
+    const cartItems = await this.getCartItems(user, cart.id);
+    let count = 0;
+    let subtotal = 0;
+    let afterSale = 0;
+    for (const item of cartItems) {
+      count += item.quantity;
+      subtotal += item.total;
+      afterSale += item.totalSale != null ? item.totalSale : 0;
+    }
+    const discount = subtotal == afterSale ? 0 : subtotal - afterSale;
+    const ship = this.setShippingFee(count);
+    return {
+      cartItems,
+      subtotal,
+      discount,
+      ship,
+      total: subtotal - afterSale + ship,
+    };
   }
 
   async cartValidation(user: user, id: string) {
