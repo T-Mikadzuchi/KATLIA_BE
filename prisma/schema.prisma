@@ -64,7 +64,6 @@ enum OrderStatus {
   PACKING
   SHIPPING
   ARRIVED
-  PAID
   CANCELED
 }
 
@@ -88,7 +87,7 @@ model product {
   categoryId  Int
   description String?
   discountId  String?
-  isDeleted   Int default(0)
+  isDeleted   Int @default(0)
   name        String
   price       Float
   productId   Int @unique 
