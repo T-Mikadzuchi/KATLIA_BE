@@ -1,3 +1,4 @@
+import { VerifyDto } from './dto/verify.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
@@ -14,7 +15,7 @@ export class AuthService {
     private config: ConfigService,
     private mailerService: MailerService,
   ) {}
-  async signUpByEmailAndOTP(dto: any) {
+  async signUpByEmailAndOTP(dto: VerifyDto) {
     try {
       //find mail
       const mailOTP = await this.prisma.mail_otp.findUnique({
@@ -138,5 +139,85 @@ export class AuthService {
       message: 'OTP sent',
       email: save.email,
     };
+  }
+
+  async verifyEmailForgotPassword(email: string) {
+    const otp = Math.floor(Math.random() * (1000000 - 100000) + 100000);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      throw new ForbiddenException("Email doesn't exist in our system");
+    }
+    const mailOTP = await this.prisma.mail_otp.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (mailOTP)
+      await this.prisma.mail_otp.delete({
+        where: {
+          email,
+        },
+      });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: this.config.get('MAIL_FROM'),
+      subject: 'Reset password verification code from Katlia Fashion',
+      text: 'Please enter your verification code: ' + otp,
+    });
+
+    const save = await this.prisma.mail_otp.create({
+      data: {
+        email,
+        otp,
+      },
+    });
+
+    return {
+      message: 'OTP sent',
+      email: save.email,
+    };
+  }
+
+  async checkOTPForgotPassword(dto: VerifyDto) {
+    const mailOTP = await this.prisma.mail_otp.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (mailOTP && dto.otp == mailOTP.otp) {
+      return {
+        email: mailOTP.email,
+        message: "OTP correct"
+      }
+    }
+    else throw new ForbiddenException("OTP incorrect")
+  }
+
+  async newPasswordAfterVerify(dto: AuthDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email
+      }
+    })
+    if (!user) throw new ForbiddenException("WTF")
+
+    const hash = await argon.hash(dto.password);
+    
+    await this.prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        password: hash
+      }
+    })
+    return "Password changed"
   }
 }

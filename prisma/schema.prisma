@@ -41,21 +41,21 @@ model import_detail {
 
 model order_detail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  staffId String
-  voucherId String
+  staffId String?
+  voucherId String?
   customerId String
-  shippingFee Float
-  paymentId String
-  status OrderStatus
-  createdAt DateTime
-  completedAt DateTime
-  address String
-  ward String
-  district String
-  city String
-  receiverName String
-  receiverPhone String
-  note String
+  shippingFee Float?
+  paymentId String?
+  status OrderStatus @default(CART)
+  createdAt DateTime?
+  completedAt DateTime?
+  address String?
+  ward String?
+  district String?
+  city String?
+  receiverName String?
+  receiverPhone String?
+  note String?
 }
 
 enum OrderStatus {
@@ -71,12 +71,12 @@ enum OrderStatus {
 model order_item {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   orderId String
-  currentPrice Float
+  currentPrice Float?
   productId Int
   size String
   colorId Int
   quantity Int
-  currentSalesPrice Float
+  currentSalesPrice Float?
 }
 
 model payment {
@@ -86,13 +86,13 @@ model payment {
 model product {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
   categoryId  Int
-  description String
-  discountId  String
-  isDeleted   Int
+  description String?
+  discountId  String?
+  isDeleted   Int default(0)
   name        String
   price       Float
-  productId   Int @unique
-  sold        Int
+  productId   Int @unique 
+  sold        Int @default(0)
   defaultPic  String
   colorNumber Int @default(1)
 }

@@ -41,35 +41,11 @@ export class ProductService {
     return salePrice;
   }
 
-  // async getThumbnailImageUrl(product: any) {
-  //   const image = await this.prismaService.image.findFirst({
-  //     where: {
-  //       productId: product.productId,
-  //     },
-  //   });
-  //   if (!image) {
-  //     console.log(product)
-  //     return null;
-  //   } 
-  //   // if (image.url.startsWith('//')) {
-  //     const imageUrl = 'https:' + image.url;
-  //     await this.prismaService.product.update({
-  //       where: {
-  //         productId: product.productId
-  //       },
-  //       data: {
-  //         defaultPic: imageUrl
-  //       }
-  //     })
-  //     return imageUrl;
-  //   // }
-  //   return image.url;
-  // }
-
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId,
+        isDeleted: 0
       },
       select: {
         productId: true,
@@ -215,6 +191,7 @@ export class ProductService {
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId: selected.categoryId,
+        isDeleted: 0
       },
       take: 4,
     });

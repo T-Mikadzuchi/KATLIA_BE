@@ -3,7 +3,6 @@ import { CartDto } from './dto/cart.dto';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { user } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ppid } from 'process';
 
 @Injectable()
 export class CartService {
@@ -30,20 +29,6 @@ export class CartService {
       const cart = await this.prismaService.order_detail.create({
         data: {
           customerId: customer.id,
-          status: 'CART',
-          staffId: '',
-          voucherId: '',
-          shippingFee: 0,
-          paymentId: '',
-          createdAt: new Date(),
-          completedAt: new Date(),
-          address: '',
-          ward: '',
-          district: '',
-          city: '',
-          receiverName: '',
-          receiverPhone: '',
-          note: '',
         },
       });
       return cart;
@@ -99,12 +84,10 @@ export class CartService {
     const cartItem = await this.prismaService.order_item.create({
       data: {
         orderId: cart.id,
-        currentPrice: -1,
         productId: dto.productId,
         size: dto.size,
         colorId: dto.colorId,
         quantity: dto.quantity,
-        currentSalesPrice: -1,
       },
     });
     return cartItem;

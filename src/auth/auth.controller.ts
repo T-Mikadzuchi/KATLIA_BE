@@ -1,6 +1,7 @@
+import { VerifyDto } from './dto/verify.dto';
 import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Patch, Post } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -8,15 +9,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signUpByEmailAndOTP')
-  @ApiBody({
-    schema: {
-      properties: {
-        'email': { type: 'string' },
-        'otp': { type: 'number' }
-      }
-    }
-  })
-  signup(@Body() dto: any) {
+  signup(@Body() dto: VerifyDto) {
     return this.authService.signUpByEmailAndOTP(dto);
   }
 
@@ -37,5 +30,27 @@ export class AuthController {
   })
   verifyEmail(@Body() dto: any) {
     return this.authService.verifyEmailForSignUp(dto);
+  }
+
+  @Post('verifyEmailForgotPassword')
+  @ApiBody({
+    schema: {
+      properties: {
+        'email': { type: 'string' },
+      }
+    }
+  })
+  verifyEmailForgotPassword(@Body() dto: any) {
+    return this.authService.verifyEmailForgotPassword(dto.email);
+  }
+
+  @Post('checkOTPForgotPassword')
+  checkOTPForgotPassword(@Body() dto: VerifyDto) {
+    return this.authService.checkOTPForgotPassword(dto);
+  }
+
+  @Patch('newPasswordAfterVerify')
+  newPasswordAfterVerify(@Body() dto: AuthDto) {
+    return this.authService.newPasswordAfterVerify(dto)
   }
 }
