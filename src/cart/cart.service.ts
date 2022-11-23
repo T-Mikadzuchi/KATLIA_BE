@@ -117,10 +117,37 @@ export class CartService {
     });
 
     const itemList: any[] = [];
-    for (const item of cartItems) {
+    let message = '';
+    for (const cartItem of cartItems) {
+      const item = await this.prismaService.product_detail.findFirst({
+        where: {
+          productId: cartItem.productId,
+          colorId: cartItem.colorId,
+          size: cartItem.size,
+        },
+      });
+      if (cartItem.quantity > item.quantity) {
+        if (item.quantity == 0) {
+          await this.deleteCartItem(user, cartItem.id);
+          itemList.push({
+            message: `Item ${item.productId} color ${item.colorId} size ${item.size} has been out of stock`,
+          });
+          continue;
+        } else {
+          await this.prismaService.order_item.update({
+            where: {
+              id: cartItem.id,
+            },
+            data: {
+              quantity: item.quantity,
+            },
+          });
+          message = `Item ${item.productId} color ${item.colorId} size ${item.size} has reached its maximum quantity`;
+        }
+      } else message = 'ok';
       const product = await this.prismaService.product.findUnique({
         where: {
-          productId: item.productId,
+          productId: cartItem.productId,
         },
       });
 
@@ -128,20 +155,21 @@ export class CartService {
 
       const color = await this.prismaService.color.findUnique({
         where: {
-          colorId: item.colorId,
+          colorId: cartItem.colorId,
         },
       });
 
       itemList.push({
-        id: item.id,
-        productId: item.productId,
+        id: cartItem.id,
+        message,
+        productId: cartItem.productId,
         image: product.defaultPic,
-        name: product.name + ' - ' + color.color + ' - ' + item.size,
+        name: product.name + ' - ' + color.color + ' - ' + cartItem.size,
         unit: product.price,
         unitSale: salePrice,
-        quantity: item.quantity,
-        total: product.price * item.quantity,
-        totalSale: salePrice != null ? salePrice * item.quantity : null,
+        quantity: cartItem.quantity,
+        total: product.price * cartItem.quantity,
+        totalSale: salePrice != null ? salePrice * cartItem.quantity : null,
       });
     }
     return itemList;
@@ -165,10 +193,15 @@ export class CartService {
   }
 
   async getCart(user: user) {
-    const cart = await this.findCart(user);
-    if (!cart) throw new ForbiddenException('No cart');
+    let cart = await this.findCart(user);
+    if (!cart) cart = await this.createCart(user);
 
     const cartItems = await this.getCartItems(user, cart.id);
+    if (cartItems.length < 1)
+      return {
+        message: 'No item in cart',
+      };
+
     let count = 0;
     let subtotal = 0;
     let afterSale = 0;
@@ -183,6 +216,7 @@ export class CartService {
       cartItems,
       subtotal,
       discount,
+      subtotalOnDiscount: subtotal - discount,
       ship,
       total: subtotal - discount + ship,
     };

@@ -50,12 +50,10 @@ model order_detail {
   createdAt DateTime?
   completedAt DateTime?
   address String?
-  ward String?
-  district String?
-  city String?
   receiverName String?
   receiverPhone String?
   note String?
+  total Float?
 }
 
 enum OrderStatus {
@@ -80,6 +78,14 @@ model order_item {
 
 model payment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  method PaymentMethod 
+  status Int
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+  PAYPAL
 }
 
 model product {
