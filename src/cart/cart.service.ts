@@ -208,7 +208,7 @@ export class CartService {
     for (const item of cartItems) {
       count += item.quantity;
       subtotal += item.total;
-      afterSale += item.totalSale != null ? item.totalSale : 0;
+      afterSale += item.totalSale != null ? item.totalSale : item.total;
     }
     const discount = afterSale == 0 ? 0 : subtotal - afterSale;
     const ship = this.setShippingFee(count);

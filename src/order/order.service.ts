@@ -1,16 +1,20 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { ProductService } from './../product/product.service';
 import { CartService } from './../cart/cart.service';
 import { OrderDto } from './dto/order.dto';
 import { user } from '@prisma/client';
 import { PrismaService } from './../prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OrderService {
   constructor(
     private prismaService: PrismaService,
     private cartService: CartService,
+    private config: ConfigService,
     private productService: ProductService,
+    private mailerService: MailerService,
   ) {}
 
   async getItemsAndUpdateQuantity(user: user, cartId: string) {
@@ -84,8 +88,12 @@ export class OrderService {
     //update product quantity
     for (const product of products) {
       for (const item of cartItems) {
-        if (item.productId == product.productId && item.colorId == product.colorId && item.size == product.size) {
-          const updateQuantity = await this.prismaService.product_detail.update(
+        if (
+          item.productId == product.productId &&
+          item.colorId == product.colorId &&
+          item.size == product.size
+        ) {
+          await this.prismaService.product_detail.update(
             {
               where: {
                 id: product.id,
@@ -95,8 +103,6 @@ export class OrderService {
               },
             },
           );
-          console.log('Update quantity');
-          console.log(updateQuantity);
           break;
         }
       }
@@ -105,7 +111,7 @@ export class OrderService {
     for (const item of itemList) {
       for (const cartItem of cartItems) {
         if (cartItem.id == item.id) {
-          const updateCart = await this.prismaService.order_item.update({
+          await this.prismaService.order_item.update({
             where: {
               id: item.id,
             },
@@ -114,8 +120,6 @@ export class OrderService {
               currentSalesPrice: item.unitSale,
             },
           });
-          console.log('Update cart');
-          console.log(updateCart);
         }
       }
     }
@@ -135,7 +139,7 @@ export class OrderService {
     for (const item of cartItems) {
       count += item.quantity;
       subtotal += item.total;
-      afterSale += item.totalSale != null ? item.totalSale : 0;
+      afterSale += item.totalSale != null ? item.totalSale : item.total;
     }
     const discount = afterSale == 0 ? 0 : subtotal - afterSale;
     const ship = this.cartService.setShippingFee(count);
@@ -148,10 +152,10 @@ export class OrderService {
       ship,
       total: subtotal - discount + ship,
     };
+    
   }
 
   async purchase(user: user, dto: OrderDto) {
-    const startTime = performance.now();
     const order = await this.getOrder(user);
     const payment = await this.prismaService.payment.create({
       data: {
@@ -175,9 +179,105 @@ export class OrderService {
         status: 'PLACED',
       },
     });
-    const endTime = performance.now();
-
-    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: this.config.get('MAIL_FROM'),
+      subject: 'Order confirmation from Katlia Fashion',
+      text: `Thanks for your order, ${placed.receiverName}. You can see your order status on the website. Order ID: ${placed.id}`,
+    });
     return placed;
+  }
+
+  async history(user: user) {
+    const cus = await this.prismaService.customer.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    const orders = await this.prismaService.order_detail.findMany({
+      where: {
+        customerId: cus.id,
+        status: {
+          not: "CART"
+        }
+      },
+    });
+
+    const ordList: any[] = [];
+    for (const order of orders) {
+      const items = await this.prismaService.order_item.aggregate({
+        where: {
+          orderId: order.id,
+        },
+        _sum: {
+          quantity: true,
+        },
+      });
+      ordList.push({
+        id: order.id,
+        createdAt: order.createdAt,
+        status: order.status,
+        numberOfItems: items._sum.quantity,
+        total: order.total,
+      });
+    }
+
+    return ordList;
+  }
+
+  async detail(user: user, id: string) {
+    const ord = await this.prismaService.order_detail.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    const numberOfItems = await this.prismaService.order_item.aggregate({
+      where: {
+        orderId: id,
+      },
+      _sum: {
+        quantity: true,
+      },
+    });
+    const items = await this.prismaService.order_item.findMany({
+      where: {
+        orderId: id,
+      },
+    });
+
+    const itemList: any[] = [];
+    for (const item of items) {
+      const color = await this.prismaService.color.findUnique({
+        where: {
+          colorId: item.colorId,
+        },
+      });
+      const product = await this.prismaService.product.findUnique({
+        where: {
+          productId: item.productId,
+        },
+      });
+      itemList.push({
+        id: item.id,
+        productId: item.productId,
+        image: product.defaultPic,
+        name: product.name + ' - ' + color.color + ' - ' + item.size,
+        price: item.currentPrice,
+        quantity: item.quantity,
+        total: item.currentPrice * item.quantity,
+        totalSale:
+          item.currentSalesPrice != null
+            ? item.currentPrice * item.quantity
+            : null,
+      });
+    }
+
+    return {
+      order: ord,
+      numberOfItems: numberOfItems._sum.quantity,
+      itemList,
+    };
   }
 }
