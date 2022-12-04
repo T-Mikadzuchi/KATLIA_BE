@@ -22,6 +22,16 @@ model customer {
 
 model customer_address {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  customerId String
+  fullname String
+  phonenumber String
+  address String
+  province String
+  district String
+  ward String
+  note String?
+  setAsDefault Boolean
+
 }
 
 model image {
@@ -143,6 +153,12 @@ model user {
   birthday DateTime?
   accessFailedAccount Boolean @default(false)
   ava String?
+  imageUrl String?
+  address String?
+  province String?
+  district String?
+  ward String?
+  note String?
 }
 
 enum Role {
