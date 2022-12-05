@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Gender } from '@prisma/client';
 import { IsNotEmpty } from 'class-validator';
+
 export class ProfileDto{
 
     @ApiProperty()
     @IsNotEmpty()
-    gender: string
+    gender: Gender
 
     @ApiProperty()
     @IsNotEmpty()

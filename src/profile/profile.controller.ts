@@ -13,7 +13,7 @@ export class ProfileController {
     constructor(private profileService: ProfileService){}
 
     @Put('updateProfile/:id')
-    updateAddress(@GetUser() user: user, @Param('id')  @Body() dto:ProfileDto){
+    updateAddress(@GetUser() user: user,  @Body() dto:ProfileDto){
       return this.profileService.updateProfile(user, dto);
     }
 }
