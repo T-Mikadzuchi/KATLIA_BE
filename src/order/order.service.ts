@@ -93,16 +93,14 @@ export class OrderService {
           item.colorId == product.colorId &&
           item.size == product.size
         ) {
-          await this.prismaService.product_detail.update(
-            {
-              where: {
-                id: product.id,
-              },
-              data: {
-                quantity: product.quantity - item.quantity,
-              },
+          await this.prismaService.product_detail.update({
+            where: {
+              id: product.id,
             },
-          );
+            data: {
+              quantity: product.quantity - item.quantity,
+            },
+          });
           break;
         }
       }
@@ -152,7 +150,6 @@ export class OrderService {
       ship,
       total: subtotal - discount + ship,
     };
-    
   }
 
   async purchase(user: user, dto: OrderDto) {
@@ -199,8 +196,8 @@ export class OrderService {
       where: {
         customerId: cus.id,
         status: {
-          not: "CART"
-        }
+          not: 'CART',
+        },
       },
     });
 
@@ -265,11 +262,12 @@ export class OrderService {
         image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + item.size,
         price: item.currentPrice,
+        salePrice: item.currentSalesPrice,
         quantity: item.quantity,
         total: item.currentPrice * item.quantity,
         totalSale:
           item.currentSalesPrice != null
-            ? item.currentPrice * item.quantity
+            ? item.currentSalesPrice * item.quantity
             : null,
       });
     }

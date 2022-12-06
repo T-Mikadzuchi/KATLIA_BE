@@ -10,4 +10,9 @@ export class CategoryController {
     gender = gender.toLowerCase();
     return this.categoryService.getCategoryByGender(gender);
   }
+
+  @Get('getAll')
+  getAll() {
+    return this.categoryService.getAll();
+  }
 }
