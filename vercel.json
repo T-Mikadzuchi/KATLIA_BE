@@ -10,7 +10,7 @@
   },
   "builds": [
     {
-      "src": "index.js",
+      "src": "src/main.ts",
       "use": "@now/node"
     }
   ],
