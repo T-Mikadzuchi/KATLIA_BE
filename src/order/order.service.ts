@@ -17,7 +17,7 @@ export class OrderService {
     private mailerService: MailerService,
   ) {}
 
-  /*async getItemsAndUpdateQuantity(user: user, cartId: string) {
+  async getItemsAndUpdateQuantity(user: user, cartId: string) {
     const cartItems = await this.prismaService.order_item.findMany({
       where: {
         orderId: cartId,
@@ -173,7 +173,7 @@ export class OrderService {
         total: order.total,
         note: dto.note,
         createdAt: new Date(),
-        status: 'PLACED',
+        status: 1,
       },
     });
     await this.mailerService.sendMail({
@@ -196,7 +196,7 @@ export class OrderService {
       where: {
         customerId: cus.id,
         status: {
-          not: 'CART',
+          not: 0,
         },
       },
     });
@@ -277,5 +277,5 @@ export class OrderService {
       numberOfItems: numberOfItems._sum.quantity,
       itemList,
     };
-  }*/
+  }
 }

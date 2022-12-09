@@ -81,7 +81,7 @@ export class StaffOrderService {
                 id:userId,
             }
         });
-        var status_string;
+        let status_string = '';
         const email= user.email;
         switch(sta) {
             case 1:  

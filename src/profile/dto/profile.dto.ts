@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class ProfileDto{
 
@@ -13,34 +13,24 @@ export class ProfileDto{
     fullName: string
 
     @ApiProperty()
-    @IsNotEmpty()
+    @IsNumberString()
     phoneNumber: string
     
     @ApiProperty()
-    @IsNotEmpty()
     birthday: Date   
     
     @ApiProperty()
-    @IsNotEmpty()
-    imageUrl: string
-    
-    @ApiProperty()
-    @IsNotEmpty()
     address: string
     
     @ApiProperty()
-    @IsNotEmpty()
     province: string
     
     @ApiProperty()
-    @IsNotEmpty()
     district: string
    
     @ApiProperty()
-    @IsNotEmpty()
     ward: string
     
     @ApiProperty()
-    @IsNotEmpty()
     note: string
 }

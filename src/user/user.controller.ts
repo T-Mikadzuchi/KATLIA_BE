@@ -10,10 +10,11 @@ import {
 } from '@nestjs/common';
 import { GetUser } from './../auth/decorator';
 import { user } from '@prisma/client';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AzureStorageFileInterceptor } from '@nestjs/azure-storage/dist/azure-storage-file.interceptor';
 import { UploadedFileMetadata } from '@nestjs/azure-storage/dist/azure-storage.service';
 
+@ApiTags('Test')
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
 @Controller('user')
@@ -24,7 +25,7 @@ export class UserController {
     return user;
   }
 
-  @Post('upAvaTest')
+  @Post('ava')
   @UseInterceptors(
     AzureStorageFileInterceptor('file', null, {
       containerName: 'img',

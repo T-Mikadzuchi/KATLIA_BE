@@ -1,6 +1,6 @@
 import { Controller , Body, Delete, Get,Put, Param, Post, UseGuards, } from '@nestjs/common';
 import { AddressService } from './address.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator';
 import { user } from '@prisma/client';
@@ -8,6 +8,7 @@ import { AddressDto } from './dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
+@ApiTags('Address')
 @Controller('address')
 export class AddressController {
     constructor(private addressService: AddressService){}

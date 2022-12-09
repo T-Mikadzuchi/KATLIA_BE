@@ -2,8 +2,9 @@ import { VerifyDto } from './dto/verify.dto';
 import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Body, Controller, Patch, Post } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
