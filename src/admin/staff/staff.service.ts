@@ -75,17 +75,8 @@ export class StaffService {
             where:{
                 id: userId,
             }, data:{
-                fullName: dto.fullname,
-                phoneNumber:dto.phoneNumber,
+                
                 role: dto.role,
-                gender: dto.gender,
-                birthday: dto.birthday,
-                address: dto.address,
-                province: dto.province,
-                district: dto.district,
-                ward: dto.ward,
-                note: dto.note,
-                imageUrl:dto.imageUrl,
             }
         });
         const upadteStaff = await this.prismaService.staff.update({
@@ -100,22 +91,20 @@ export class StaffService {
     async addStaff(user: user, dto: StaffDto){
         if (!(await this.adminService.isAdmin(user)))
         throw new ForbiddenException('Permission denied');
+        const userr = await this.prismaService.user.findUnique({
+            where: {
+              email: dto.email,
+            },
+          });
+          if (userr) {
+            return new ForbiddenException('Credential taken');
+          }
         const addStaffUser= await this.prismaService.user.create({
             data:{
                 email: dto.email,
                 password: '1234',
-                fullName: dto.fullname,
-                phoneNumber:dto.phoneNumber,
                 role: dto.role,
-                gender: dto.gender,
-                birthday: dto.birthday,
-                address: dto.address,
-                province: dto.province,
-                district: dto.district,
-                ward: dto.ward,
-                note: dto.note,
-                imageUrl:dto.imageUrl,
-                
+                            
             }
         });
         const addStaff= await this.prismaService.staff.create({
