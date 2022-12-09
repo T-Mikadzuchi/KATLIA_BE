@@ -12,7 +12,7 @@ import { GetUser } from 'src/auth/decorator';
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  @Put('purchase')
+  /*@Put('purchase')
   purchase(@GetUser() user: user, @Body() dto: OrderDto) {
     return this.orderService.purchase(user, dto)
   }
@@ -25,5 +25,5 @@ export class OrderController {
   @Get('detail/:id') 
   detail(@GetUser() user: user, @Param('id') id: string) {
     return this.orderService.detail(user, id)
-  }
+  }*/
 }

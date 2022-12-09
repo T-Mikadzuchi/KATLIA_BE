@@ -22,7 +22,7 @@ import { CartDto } from './dto/cart.dto';
 export class CartController {
   constructor(private cartService: CartService) {}
 
-  @Post('addItemToCart')
+  /*@Post('addItemToCart')
   addItemToCart(@GetUser() user: user, @Body() dto: CartDto) {
     return this.cartService.addItemToCart(user, dto);
   }
@@ -55,5 +55,5 @@ export class CartController {
   updateCartItem(@GetUser() user: user, @Body() dto: any) {
     if (!dto.id) return new ForbiddenException("Pls enter cart item's id");
     return this.cartService.updateCartItem(user, dto.id, dto.number);
-  }
+  }*/
 }

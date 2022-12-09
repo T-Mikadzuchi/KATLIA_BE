@@ -17,7 +17,7 @@ export class OrderService {
     private mailerService: MailerService,
   ) {}
 
-  async getItemsAndUpdateQuantity(user: user, cartId: string) {
+  /*async getItemsAndUpdateQuantity(user: user, cartId: string) {
     const cartItems = await this.prismaService.order_item.findMany({
       where: {
         orderId: cartId,
@@ -277,5 +277,5 @@ export class OrderService {
       numberOfItems: numberOfItems._sum.quantity,
       itemList,
     };
-  }
+  }*/
 }
