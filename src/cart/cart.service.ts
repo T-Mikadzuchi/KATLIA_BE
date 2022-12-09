@@ -11,7 +11,7 @@ export class CartService {
     private productService: ProductService,
   ) {}
 
-  async createCart(user: user) {
+  /*async createCart(user: user) {
     const customer = await this.prismaService.customer.findUnique({
       where: {
         userId: user.id,
@@ -283,5 +283,5 @@ export class CartService {
       },
     });
     return updated;
-  }
+  }*/
 }

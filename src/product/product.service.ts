@@ -95,16 +95,12 @@ export class ProductService {
   }
 
   async getTop4(gender: string) {
-    const startTime = performance.now();
-
     const products = await this.getProductByGender(gender);
     const top4 = await products
       .sort((a, b) => {
         return b.sold - a.sold;
       })
       .slice(0, 4);
-    const endTime = performance.now();
-    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
     return top4;
   }
 

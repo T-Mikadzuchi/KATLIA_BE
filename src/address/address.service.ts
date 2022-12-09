@@ -25,7 +25,7 @@ export class AddressService {
     }
     
 
-    async findAddress(user: user){
+    async getAllAddress(user: user){
         const customer = await this.prismaService.customer.findUnique({
             where: {
               userId: user.id,
@@ -40,11 +40,6 @@ export class AddressService {
           return address;
     }
    
-    async getAllAddress(user: user){
-        const address= this. findAddress(user);
-        return address;
-        
-    }
     async updateAddress(user: user, addressId: string, dto: AddressDto){
         const detailAdressId= await (await this.findDetailAddress(user, addressId)).id;
         const customer = await this.prismaService.customer.findUnique({
@@ -76,6 +71,7 @@ export class AddressService {
             }
   
           });
+          return updated;
         }
         else{
           const updated= await this.prismaService.customer_address.update({
@@ -93,10 +89,12 @@ export class AddressService {
               note: dto.note,
               setAsDefault: false,
             }
+
   
           });
+          return updated;
         }
-        
+       
 
     }
     async deleteAddress(user: user, addressId: string){
@@ -107,7 +105,9 @@ export class AddressService {
            id: addressId,
         }
       });
+      return deleteAddress;
     }
+
     async addAddress(user: user, dto: AddressDto){
       const customer = await this.prismaService.customer.findUnique({
         where: {
@@ -136,6 +136,7 @@ export class AddressService {
   
           }
         });
+        return insertAddress;
       }
     else{
       const insertAddress= await this.prismaService.customer_address.create({
@@ -153,7 +154,8 @@ export class AddressService {
 
         }
       });
+      return insertAddress;
     }
       
-    }
+  }
 }

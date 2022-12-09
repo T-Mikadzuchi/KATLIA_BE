@@ -30,8 +30,7 @@ model customer_address {
   district String
   ward String
   note String?
-  setAsDefault Boolean
-
+  setAsDefault Boolean @default(false)
 }
 
 model image {
@@ -56,7 +55,7 @@ model order_detail {
   customerId String
   shippingFee Float?
   paymentId String?
-  status OrderStatus @default(CART)
+  status Int 
   createdAt DateTime?
   completedAt DateTime?
   address String?
@@ -66,14 +65,6 @@ model order_detail {
   total Float?
 }
 
-enum OrderStatus {
-  CART
-  PLACED
-  PACKING
-  SHIPPING
-  ARRIVED
-  CANCELED
-}
 
 model order_item {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -165,7 +156,7 @@ enum Role {
   ADMIN
   CUSTOMER
   SALES
-  STAFF
+  STORAGE 
 }
 
 enum Gender {

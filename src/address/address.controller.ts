@@ -12,7 +12,7 @@ import { AddressDto } from './dto';
 export class AddressController {
     constructor(private addressService: AddressService){}
 
-    @Get('getAddress')
+    @Get('getAllAddress')
     getCart(@GetUser() user: user) {
       return this.addressService.getAllAddress(user);
     }

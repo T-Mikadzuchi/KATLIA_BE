@@ -13,6 +13,7 @@ import { AdminModule } from './admin/admin.module';
 import { OrderModule } from './order/order.module';
 import { AddressModule } from './address/address.module';
 import { ProfileModule } from './profile/profile.module';
+import { StaffOrderModule } from './staff_order/staff_order.module';
 
 @Module({
   imports: [
@@ -31,7 +32,9 @@ import { ProfileModule } from './profile/profile.module';
     AdminModule,
     OrderModule,
     AddressModule,
-    ProfileModule
+    ProfileModule,
+    StaffOrderModule
   ],
+ 
 })
 export class AppModule {}
