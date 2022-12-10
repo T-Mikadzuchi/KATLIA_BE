@@ -10,7 +10,7 @@ import {
   ForbiddenException,
   Patch,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator';
 import { user } from '@prisma/client';
@@ -18,6 +18,7 @@ import { CartDto } from './dto/cart.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
+@ApiTags('Cart')
 @Controller('cart')
 export class CartController {
   constructor(private cartService: CartService) {}

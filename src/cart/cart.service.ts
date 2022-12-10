@@ -21,7 +21,7 @@ export class CartService {
     const checkCart = await this.prismaService.order_detail.findFirst({
       where: {
         customerId: customer.id,
-        status: 'CART',
+        status: 0,
       },
     });
 
@@ -103,7 +103,7 @@ export class CartService {
     const cart = await this.prismaService.order_detail.findFirst({
       where: {
         customerId: customer.id,
-        status: 'CART',
+        status: 0,
       },
     });
     return cart;

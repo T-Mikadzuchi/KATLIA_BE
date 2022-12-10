@@ -1,11 +1,11 @@
 import { AzureStorageModule } from '@nestjs/azure-storage';
 import { Module } from '@nestjs/common';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { ProfileController } from './profile.controller';
+import { ProfileService } from './profile.service';
 
 @Module({
-  controllers: [UserController],
-  providers: [UserService],
+  controllers: [ProfileController],
+  providers: [ProfileService],
   imports: [
     AzureStorageModule.withConfig({
       sasKey: process.env['AZURE_STORAGE_SAS_KEY'],
@@ -14,4 +14,4 @@ import { UserService } from './user.service';
     }),
   ],
 })
-export class UserModule {}
+export class ProfileModule {}

@@ -173,7 +173,7 @@ export class OrderService {
         total: order.total,
         note: dto.note,
         createdAt: new Date(),
-        status: 'PLACED',
+        status: 1,
       },
     });
     await this.mailerService.sendMail({
@@ -196,7 +196,7 @@ export class OrderService {
       where: {
         customerId: cus.id,
         status: {
-          not: 'CART',
+          not: 0,
         },
       },
     });

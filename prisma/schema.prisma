@@ -22,6 +22,15 @@ model customer {
 
 model customer_address {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  customerId String
+  fullname String
+  phonenumber String
+  address String
+  province String
+  district String
+  ward String
+  note String?
+  setAsDefault Boolean @default(false)
 }
 
 model image {
@@ -46,7 +55,7 @@ model order_detail {
   customerId String
   shippingFee Float?
   paymentId String?
-  status OrderStatus @default(CART)
+  status Int @default(0)
   createdAt DateTime?
   completedAt DateTime?
   address String?
@@ -54,15 +63,6 @@ model order_detail {
   receiverPhone String?
   note String?
   total Float?
-}
-
-enum OrderStatus {
-  CART
-  PLACED
-  PACKING
-  SHIPPING
-  ARRIVED
-  CANCELED
 }
 
 model order_item {
@@ -143,13 +143,18 @@ model user {
   birthday DateTime?
   accessFailedAccount Boolean @default(false)
   ava String?
+  address String?
+  province String?
+  district String?
+  ward String?
+  note String?
 }
 
 enum Role {
   ADMIN
   CUSTOMER
   SALES
-  STAFF
+  STORAGE 
 }
 
 enum Gender {

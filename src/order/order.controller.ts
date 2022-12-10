@@ -2,12 +2,13 @@ import { OrderDto } from './dto/order.dto';
 import { user } from '@prisma/client';
 import { OrderService } from './order.service';
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
+@ApiTags('Order')
 @Controller('order')
 export class OrderController {
   constructor(private orderService: OrderService) {}
