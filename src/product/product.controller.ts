@@ -14,8 +14,8 @@ export class ProductController {
 
   @Get('getProductByCategoryId/:categoryId')
   getProductByCategoryId(@Param('categoryId') categoryId: number) {
-    categoryId = parseInt(categoryId.toString())
-    return this.productService.getProductByCategoryId(categoryId)
+    categoryId = parseInt(categoryId.toString());
+    return this.productService.getProductByCategoryId(categoryId);
   }
 
   @Get('getTop4/:gender')
@@ -26,13 +26,13 @@ export class ProductController {
 
   @Get('getProductDetail/:id')
   getProductDetail(@Param('id') id: number) {
-    id = parseInt(id.toString())
-    return this.productService.getProductDetail(id)
+    id = parseInt(id.toString());
+    return this.productService.getProductDetail(id);
   }
 
-  @Get('get4SimilarItems/:id') 
+  @Get('get4SimilarItems/:id')
   get4SimilarItems(@Param('id') id: number) {
-    id = parseInt(id.toString())
-    return this.productService.get4SimilarItems(id)
+    id = parseInt(id.toString());
+    return this.productService.get4SimilarItems(id);
   }
 }

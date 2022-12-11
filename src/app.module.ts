@@ -33,8 +33,7 @@ import { StaffOrderModule } from './staff_order/staff_order.module';
     OrderModule,
     AddressModule,
     ProfileModule,
-    StaffOrderModule
+    StaffOrderModule,
   ],
- 
 })
 export class AppModule {}

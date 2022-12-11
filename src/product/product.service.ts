@@ -13,12 +13,12 @@ export class ProductService {
     });
     await this.prismaService.product.update({
       where: {
-        productId: productId
+        productId: productId,
       },
       data: {
-        colorNumber: productColor.length
-      }
-    })
+        colorNumber: productColor.length,
+      },
+    });
     return productColor;
   }
 
@@ -45,7 +45,7 @@ export class ProductService {
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId,
-        isDeleted: 0
+        isDeleted: 0,
       },
       select: {
         productId: true,
@@ -53,7 +53,7 @@ export class ProductService {
         price: true,
         sold: true,
         defaultPic: true,
-        colorNumber: true
+        colorNumber: true,
       },
     });
     for (const product of findProduct) {
@@ -187,7 +187,7 @@ export class ProductService {
     const findProduct = await this.prismaService.product.findMany({
       where: {
         categoryId: selected.categoryId,
-        isDeleted: 0
+        isDeleted: 0,
       },
       take: 4,
     });

@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class StaffOrderDto {
-        
-    @ApiProperty()
-    cancelReason: string
+  @ApiProperty()
+  cancelReason: string;
 }

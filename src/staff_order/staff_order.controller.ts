@@ -13,28 +13,32 @@ import { identity } from 'rxjs';
 @ApiTags('Staff Order')
 @Controller('staff-order')
 export class StaffOrderController {
-    constructor(private staffOrderService: StaffOrderService){}
+  constructor(private staffOrderService: StaffOrderService) {}
 
-    @Put('updateOrderStatus/:id')
-    updateOrderStatus(@GetUser() user: user, @Param('id') orderId: string, ){
-        return this.staffOrderService.updateOrderStatus(user,orderId);
-      }
-    @Put('cancelOrder/:id')
-    cancelOrder(@GetUser() user: user, @Param ('id') orderId: string, @Body() dto: StaffOrderDto){
-      return this.staffOrderService.cancelOrder(user,orderId,dto);
-    }
+  @Put('updateOrderStatus/:id')
+  updateOrderStatus(@GetUser() user: user, @Param('id') orderId: string) {
+    return this.staffOrderService.updateOrderStatus(user, orderId);
+  }
+  @Put('cancelOrder/:id')
+  cancelOrder(
+    @GetUser() user: user,
+    @Param('id') orderId: string,
+    @Body() dto: StaffOrderDto,
+  ) {
+    return this.staffOrderService.cancelOrder(user, orderId, dto);
+  }
 
-    @Get('getAllOrder')
-    getAllOrder(@GetUser() user: user){
-      return this.staffOrderService.getAllOrder(user);
-    }
-   
-    @Get('getDetailOrder/:id')
-    getDetailOrder(@GetUser() user: user, @Param ('id') orderId: string ){
-      return this.staffOrderService.getDetailOrder(user,orderId);
-    }
-    @Get('getPriceOrder/:id')
-    getPriceOrder(@GetUser() user: user, @Param ('id') orderId: string ){
-      return this.staffOrderService.getPriceOrder(user, orderId);
-    }
+  @Get('getAllOrder')
+  getAllOrder(@GetUser() user: user) {
+    return this.staffOrderService.getAllOrder(user);
+  }
+
+  @Get('getDetailOrder/:id')
+  getDetailOrder(@GetUser() user: user, @Param('id') orderId: string) {
+    return this.staffOrderService.getDetailOrder(user, orderId);
+  }
+  @Get('getPriceOrder/:id')
+  getPriceOrder(@GetUser() user: user, @Param('id') orderId: string) {
+    return this.staffOrderService.getPriceOrder(user, orderId);
+  }
 }

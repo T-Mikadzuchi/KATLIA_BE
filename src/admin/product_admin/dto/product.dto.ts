@@ -28,7 +28,7 @@ export class ProductDto {
   sizeList: string;
 
   @ApiProperty({
-    type: [Number]
+    type: [Number],
   })
   @IsNotEmpty()
   @IsArray()

@@ -7,6 +7,6 @@ export class AdminService {
   constructor(private prismaService: PrismaService) {}
 
   async isAdmin(user: user) {
-    return user.role == "ADMIN"
+    return user.role == 'ADMIN';
   }
 }
