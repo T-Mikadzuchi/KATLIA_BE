@@ -242,6 +242,32 @@ export class StaffOrderService {
        
        return getAllItemOrder;
    }
+   async getPriceOrder( user: user, orderId: string){
+    if (!(await this.isPermission(user)))
+        throw new ForbiddenException('Permission denied');
+    const getAllItem= await this.prismaService.order_item.findMany({
+        where:{
+            orderId: orderId,
+        }
+    });
+    let total = 0;
+    let discount=0;
+    
+    for(const item of getAllItem)
+    {
+        total += item.currentPrice*item.quantity;
+        discount+= (item.currentSalesPrice*item.quantity);
+    }
+    const order= await this.prismaService.order_detail.findUnique({
+        where:{
+            id: orderId,
+        }
+    });
+    let shippingFee= order.shippingFee;
+    const getprice ={"total": total, "shippingFee": shippingFee,"discount":discount, "subtotal": total+shippingFee-discount};
+    
+    return getprice;    
+   }
     
    
 }

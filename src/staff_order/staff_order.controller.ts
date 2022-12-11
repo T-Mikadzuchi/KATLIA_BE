@@ -6,6 +6,7 @@ import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator';
 import { user } from '@prisma/client';
 import { UseGuards } from '@nestjs/common/decorators';
+import { identity } from 'rxjs';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -30,5 +31,9 @@ export class StaffOrderController {
     @Get('getDetailOrder/:id')
     getDetailOrder(@GetUser() user: user, @Param ('id') orderId: string ){
       return this.staffOrderService.getDetailOrder(user,orderId);
+    }
+    @Get('getPriceOrder/:id')
+    getPriceOrder(@GetUser() user: user, @Param ('id') orderId: string ){
+      return this.staffOrderService.getPriceOrder(user, orderId);
     }
 }
