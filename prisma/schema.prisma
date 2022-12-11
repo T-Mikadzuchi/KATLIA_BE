@@ -113,7 +113,7 @@ model product_detail {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   colorId   Int
   productId Int
-  quantity  Int
+  quantity  Int @default(0)
   size      String
 }
 
