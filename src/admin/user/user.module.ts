@@ -5,6 +5,6 @@ import { UserService } from './user.service';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService, AdminService]
+  providers: [UserService, AdminService],
 })
 export class UserModule {}

@@ -3,11 +3,9 @@ import { Gender, Role } from '@prisma/client';
 import { IsNotEmpty } from 'class-validator';
 
 export class StaffDto {
-    
-    @ApiProperty()
-    @IsNotEmpty()
-    email:string
-
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -17,8 +15,7 @@ export class StaffDto {
     @IsNotEmpty()
     startAt: Date
 
-    @ApiProperty()
-    @IsNotEmpty()
-    status: number
-  
+  @ApiProperty()
+  @IsNotEmpty()
+  status: number;
 }

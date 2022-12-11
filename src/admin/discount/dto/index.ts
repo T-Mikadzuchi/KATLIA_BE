@@ -1,1 +1,1 @@
-export * from './discount.dto'
+export * from './discount.dto';

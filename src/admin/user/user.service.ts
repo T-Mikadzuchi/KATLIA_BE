@@ -5,30 +5,27 @@ import { user } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-    constructor(
-        private prismaService: PrismaService,
-        private adminService: AdminService,
-      ) {}
+  constructor(
+    private prismaService: PrismaService,
+    private adminService: AdminService,
+  ) {}
 
-    async getAllUser(user: user) {
-       if (!(await this.adminService.isAdmin(user)))
+  async getAllUser(user: user) {
+    if (!(await this.adminService.isAdmin(user)))
       throw new ForbiddenException('Permission denied');
-      
-        const getuser = await this.prismaService.user.findMany();
-        const userList: any[] = [];
-        for (const user of getuser) {
-          userList.push({
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-          });
-        }
-        
-        return userList;
-        
-      }
 
-      
+    const getuser = await this.prismaService.user.findMany();
+    const userList: any[] = [];
+    for (const user of getuser) {
+      userList.push({
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+      });
+    }
+
+    return userList;
+  }
 }

@@ -194,30 +194,29 @@ export class AuthService {
     if (mailOTP && dto.otp == mailOTP.otp) {
       return {
         email: mailOTP.email,
-        message: "OTP correct"
-      }
-    }
-    else throw new ForbiddenException("OTP incorrect")
+        message: 'OTP correct',
+      };
+    } else throw new ForbiddenException('OTP incorrect');
   }
 
   async newPasswordAfterVerify(dto: AuthDto) {
     const user = await this.prisma.user.findUnique({
       where: {
-        email: dto.email
-      }
-    })
-    if (!user) throw new ForbiddenException("WTF")
+        email: dto.email,
+      },
+    });
+    if (!user) throw new ForbiddenException('WTF');
 
     const hash = await argon.hash(dto.password);
-    
+
     await this.prisma.user.update({
       where: {
-        id: user.id
+        id: user.id,
       },
       data: {
-        password: hash
-      }
-    })
-    return "Password changed"
+        password: hash,
+      },
+    });
+    return 'Password changed';
   }
 }

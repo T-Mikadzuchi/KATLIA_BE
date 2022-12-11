@@ -10,5 +10,4 @@ export class MailService {
     private mailerService: MailerService,
     private prisma: PrismaService,
   ) {}
-  
 }
