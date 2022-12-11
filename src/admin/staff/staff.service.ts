@@ -1,8 +1,10 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { user } from '@prisma/client';
+import { Role, user } from '@prisma/client';
 import { StaffDto } from './dto';
 import { AdminService } from '../admin.service';
+import { hash } from 'argon2';
+import * as argon from 'argon2';
 
 @Injectable()
 export class StaffService {
@@ -10,52 +12,36 @@ export class StaffService {
                 private adminService: AdminService,
                 ){}
     
-    async getuser(){
-        const getUser = await this.prismaService.user.findMany();
-        const userList: any[]=[];
-        
-        for(const user of getUser){
-            userList.push({
-                id: user.id,
-                fullname: user.fullName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role,
-            })
-        };
-        return userList;
-    }
-    async getStaff (){
-        const staffList: any[] = [];
-        const getStaff= await this.prismaService.staff.findMany();
-        for(const staff of getStaff){
-            staffList.push({
-                id: staff.id,
-                userId: staff.userId,
-                status: staff.status,
-                startAt: staff.startAt,
-            })
-        }
-        return staffList;
-    }
+   
 
     async getAllStaff(user: user){
         if (!(await this.adminService.isAdmin(user)))
         throw new ForbiddenException('Permission denied');
-        const userList = await this.getuser();
-        const staffList= await this.getStaff()
+        const userList = await this.prismaService.user.findMany({
+            where:{
+                OR: [
+                    {
+                      role:"SALES",
+                    },
+                    {
+                        role:"STORAGE",
+                    }
+                ]
+            }
+        });
+        const staffList= await this.prismaService.staff.findMany();
         
         const List: any[]=[];
         for (const staff of staffList) {
-            for(const user of userList)
+            for(const userr of userList)
             {
-                if(user.id==staff.userId)
+                if(userr.id==staff.userId)
                 {
                     List.push({
-                        email: user.email,
-                        fullname: user.fullName,
-                        phoneNumber: user.phoneNumber,
-                        role: user.role,
+                        email: userr.email,
+                        fullname: userr.fullName,
+                        phoneNumber: userr.phoneNumber,
+                        role: userr.role,
                         staffId: staff.id,
                         startAt: staff.startAt,
                         status: staff.status,
@@ -96,26 +82,57 @@ export class StaffService {
               email: dto.email,
             },
           });
-          if (userr) {
-            return new ForbiddenException('Credential taken');
-          }
-        const addStaffUser= await this.prismaService.user.create({
-            data:{
-                email: dto.email,
-                password: '1234',
-                role: dto.role,
-                            
-            }
-        });
-        const addStaff= await this.prismaService.staff.create({
-            data:{
-                userId: addStaffUser.id,
-                startAt: dto.startAt,
-                status: dto.status,
-            }
-        });
-        return addStaff;
+          const hash = await argon.hash("123456");
 
+          if(!userr)
+          {
+            const addStaffUser= await this.prismaService.user.create({
+                data:{
+                    email: dto.email,
+                    password: hash,
+                    role: dto.role,
+                }
+            });
+            await this.prismaService.staff.create({
+                data:{
+                    userId: addStaffUser.id,
+                    startAt: dto.startAt,
+                    status: 1,
+                }
+            });
+          }
+
+
+          if (userr) {
+            const check= await this.prismaService.staff.findUnique({
+                where:{
+                    userId: userr.id,
+                }
+            });
+            if(check){
+                throw new ForbiddenException('Staff existed in database');
+                return;
+            }
+            else{
+                const upadateRole= await this.prismaService.user.update({
+                    where:{
+                        id: userr.id,
+                    }, data:{
+                        role: dto.role,
+                    }
+                });
+                await this.prismaService.staff.create({
+                    data:{
+                        userId: userr.id,
+                        startAt: dto.startAt,
+                        status: 1,
+                    }
+                });
+                
+
+            }
+        }
+       
     }
 
 }

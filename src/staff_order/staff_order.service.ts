@@ -4,6 +4,8 @@ import { StaffOrderDto } from './dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { user } from '@prisma/client';
+import { IsDate } from 'class-validator';
+import { networkInterfaces } from 'os';
 
 @Injectable()
 export class StaffOrderService {
@@ -11,9 +13,11 @@ export class StaffOrderService {
                 private mailerService: MailerService,
                 private config: ConfigService,){}
     
-    async isSales(user: user) {
-        return user.role == "SALES"
+    async isPermission(user: user) {
+        return (user.role == "SALES"||user.role=="ADMIN");
         }
+   
+    
     async updateQuatity( productId: number, colorId: number, size: string, quantity_order: number){
         const product=this.prismaService.product_detail.findFirst({
             where:{
@@ -30,13 +34,13 @@ export class StaffOrderService {
                 size: size 
             }, 
             data:{
-                quantity: quantity-quantity_order,
+                quantity: quantity+quantity_order,
             }
         });
         return upadated;
     }
     async updateOrderStatus(userr:user,orderId: string){
-        if (!(await this.isSales(userr)))
+        if (!(await this.isPermission(userr)))
             throw new ForbiddenException('Permission denied');
         const order= await this.prismaService.order_detail.findUnique({
             where:{
@@ -44,30 +48,32 @@ export class StaffOrderService {
             },            
         });
         const sta= order.status +1;
+        var completeDate= new Date();
         
-        const updated= this.prismaService.order_detail.update({
-            where:{
-                id: orderId,
-            },
-            data:{
-                status: sta, 
-            }
-        });
-        
-
-        if(sta==4)
-        {
-            const getItemOrder= await this.prismaService.order_item.findMany({
+        if(sta==4){
+            const updated= await this.prismaService.order_detail.update({
                 where:{
-                    orderId: orderId,
+                    id: orderId,
+                },
+                data:{
+                    status: sta, 
+                    completedAt: completeDate,
                 }
-            })
-            for (const order_item of getItemOrder) {
-                this.updateQuatity(order_item.productId,order_item.colorId, order_item.size, order_item.quantity)
-                               
-              }
-        
+            });
+            
         }
+        else{
+            const updated= await this.prismaService.order_detail.update({
+                where:{
+                    id: orderId,
+                },
+                data:{
+                    status: sta, 
+                }
+            });
+        }
+        
+        
 
         const customerId= order.customerId;
         const customer= await this.prismaService.customer.findUnique({
@@ -109,12 +115,12 @@ export class StaffOrderService {
                 });
           
         
-        return updated;
+        
        
     }
 
     async cancelOrder(user: user,orderId: string, dto: StaffOrderDto){
-        if (!(await this.isSales(user)))
+        if (!(await this.isPermission(user)))
             throw new ForbiddenException('Permission denied');
         const order= await this.prismaService.order_detail.findUnique({
             where:{
@@ -132,6 +138,16 @@ export class StaffOrderService {
                     note: dto.cancelReason,
                 }
             });
+            const getItemOrder= await this.prismaService.order_item.findMany({
+                where:{
+                    orderId: orderId,
+                }
+            })
+            for (const order_item of getItemOrder) {
+                this.updateQuatity(order_item.productId,order_item.colorId, order_item.size, order_item.quantity)
+                               
+              }
+        
             const customerId= order.customerId;
             const customer= await this.prismaService.customer.findUnique({
                 where:{
@@ -163,4 +179,95 @@ export class StaffOrderService {
         }
         
     }
+
+    async getAllOrder(user: user){
+        if (!(await this.isPermission(user)))
+            throw new ForbiddenException('Permission denied');
+        const getAllOrder= await this.prismaService.order_detail.findMany({
+            where:{
+                OR: [
+                    {
+                      status: 1,
+                    },
+                    {
+                        status: 2,
+                    },
+                    {
+                        status: 3,
+                    },
+                    {
+                        status: 4,
+                    },
+                    {
+                        status: 5,
+                    }
+                ]
+            },
+            orderBy:{
+                createdAt:"desc",
+            }
+        });
+        const orderList: any[]=[];
+        for(const order of getAllOrder){
+            
+            orderList.push({
+                orderId: order.id,
+                customerName: order.fullName,
+                address: order.address,
+                createDate: order.createdAt,
+                total: order.total,
+                status: order.status,
+            });
+        }
+        return orderList;
+    }
+   async getDetailOrder(user: user, orderId: string){
+        if (!(await this.isPermission(user)))
+        throw new ForbiddenException('Permission denied');
+        
+        const getAllItemOrder= await this.prismaService.order_item.findMany({
+            where:{
+                orderId: orderId,
+            }, select:{
+                id: true,
+                orderId: true,
+                currentPrice: true,
+                productId: true,
+                size: true,
+                colorId: true,
+                quantity: true,
+                currentSalesPrice: true,
+            }
+        });
+       
+       return getAllItemOrder;
+   }
+   async getPriceOrder( user: user, orderId: string){
+    if (!(await this.isPermission(user)))
+        throw new ForbiddenException('Permission denied');
+    const getAllItem= await this.prismaService.order_item.findMany({
+        where:{
+            orderId: orderId,
+        }
+    });
+    let total = 0;
+    let discount=0;
+    
+    for(const item of getAllItem)
+    {
+        total += item.currentPrice*item.quantity;
+        discount+= (item.currentSalesPrice*item.quantity);
+    }
+    const order= await this.prismaService.order_detail.findUnique({
+        where:{
+            id: orderId,
+        }
+    });
+    let shippingFee= order.shippingFee;
+    const getprice ={"total": total, "shippingFee": shippingFee,"discount":discount, "subtotal": total+shippingFee-discount};
+    
+    return getprice;    
+   }
+    
+   
 }
