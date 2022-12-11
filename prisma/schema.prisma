@@ -58,6 +58,7 @@ model order_detail {
   status Int 
   createdAt DateTime?
   completedAt DateTime?
+  fullName String?
   address String?
   receiverName String?
   receiverPhone String?

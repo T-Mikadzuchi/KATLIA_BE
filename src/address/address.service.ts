@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from './../prisma/prisma.service';
 import { user } from '@prisma/client';
 import { AddressDto } from './dto';
@@ -53,48 +53,36 @@ export class AddressService {
               setAsDefault: true,
           }
         });
-        if(!findDefault){
-          const updated= await this.prismaService.customer_address.update({
+        if(dto.setAsDefault==true && findDefault)
+        {
+          await this.prismaService.customer_address.update({
             where:{
-              id: detailAdressId,
-            },
-            data:{
-             
-              fullname: dto.fullname,
-              phonenumber: dto.phonenumber,
-              address: dto.address,
-              province: dto.province,
-              district: dto.district,
-              ward: dto.ward,
-              note: dto.note,
-              setAsDefault: dto.setAsDefault,
+              id: findDefault.id,
+            }, data:{
+              setAsDefault:false,
             }
-  
           });
-          return updated;
         }
-        else{
-          const updated= await this.prismaService.customer_address.update({
-            where:{
-              id: detailAdressId,
-            },
-            data:{
-             
-              fullname: dto.fullname,
-              phonenumber: dto.phonenumber,
-              address: dto.address,
-              province: dto.province,
-              district: dto.district,
-              ward: dto.ward,
-              note: dto.note,
-              setAsDefault: false,
-            }
+        const updated= await this.prismaService.customer_address.update({
+          where:{
+            id: detailAdressId,
+          },
+          data:{
+            
+            fullname: dto.fullname,
+            phonenumber: dto.phonenumber,
+            address: dto.address,
+            province: dto.province,
+            district: dto.district,
+            ward: dto.ward,
+            note: dto.note,
+            setAsDefault: dto.setAsDefault,
+          }
 
-  
-          });
-          return updated;
-        }
-       
+        });
+        return updated;
+        
+              
 
     }
     async deleteAddress(user: user, addressId: string){
@@ -120,7 +108,18 @@ export class AddressService {
             setAsDefault: true,
         }
       });
-      if(!findDefault){
+      
+      if(findDefault && dto.setAsDefault==true)
+      {
+        await this.prismaService.customer_address.update({
+          where:{
+            id: findDefault.id,
+          }, data:{
+            setAsDefault:false,
+          }
+        });
+      }
+
         const insertAddress= await this.prismaService.customer_address.create({
         
           data:{
@@ -137,25 +136,6 @@ export class AddressService {
           }
         });
         return insertAddress;
-      }
-    else{
-      const insertAddress= await this.prismaService.customer_address.create({
-        
-        data:{
-          customerId: customer.id,
-          fullname: dto.fullname,
-          phonenumber: dto.phonenumber,
-          address: dto.address,
-          province: dto.province,
-          district: dto.district,
-          ward: dto.ward,
-          note: dto.note,
-          setAsDefault: false,
-
-        }
-      });
-      return insertAddress;
-    }
       
   }
 }

@@ -20,7 +20,7 @@ export class ProfileController {
 
     @Get('getProfile')
     getProfile(@GetUser() user: user){
-      this.profileService.getProfile(user);
+      return this.profileService.getProfile(user);
     }
 
 }

@@ -1,4 +1,4 @@
-import { Controller, Put, Param, Body } from '@nestjs/common';
+import { Controller, Put, Param, Body, Get } from '@nestjs/common';
 import { StaffOrderService } from './staff_order.service';
 import { StaffOrderDto } from './dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -20,5 +20,10 @@ export class StaffOrderController {
     @Put('cancelOrder/:id')
     cancelOrder(@GetUser() user: user, @Param ('id') orderId: string, @Body() dto: StaffOrderDto){
       return this.staffOrderService.cancelOrder(user,orderId,dto);
+    }
+
+    @Get('getAllOrder')
+    getAllOrder(@GetUser() user: user){
+      return this.staffOrderService.getAllOrder(user);
     }
 }
