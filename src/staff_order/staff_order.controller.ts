@@ -26,4 +26,9 @@ export class StaffOrderController {
     getAllOrder(@GetUser() user: user){
       return this.staffOrderService.getAllOrder(user);
     }
+   
+    @Get('getDetailOrder/:id')
+    getDetailOrder(@GetUser() user: user, @Param ('id') orderId: string ){
+      return this.staffOrderService.getDetailOrder(user,orderId);
+    }
 }

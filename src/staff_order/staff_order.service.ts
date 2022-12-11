@@ -221,4 +221,27 @@ export class StaffOrderService {
         }
         return orderList;
     }
+   async getDetailOrder(user: user, orderId: string){
+        if (!(await this.isPermission(user)))
+        throw new ForbiddenException('Permission denied');
+        
+        const getAllItemOrder= await this.prismaService.order_item.findMany({
+            where:{
+                orderId: orderId,
+            }, select:{
+                id: true,
+                orderId: true,
+                currentPrice: true,
+                productId: true,
+                size: true,
+                colorId: true,
+                quantity: true,
+                currentSalesPrice: true,
+            }
+        });
+       
+       return getAllItemOrder;
+   }
+    
+   
 }
