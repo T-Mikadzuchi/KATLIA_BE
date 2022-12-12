@@ -17,7 +17,7 @@ export class OrderService {
     private mailerService: MailerService,
   ) {}
 
-  /*async getItemsAndUpdateQuantity(user: user, cartId: string) {
+  async getItemsAndUpdateQuantity(user: user, cartId: string) {
     const cartItems = await this.prismaService.order_item.findMany({
       where: {
         orderId: cartId,
@@ -93,16 +93,14 @@ export class OrderService {
           item.colorId == product.colorId &&
           item.size == product.size
         ) {
-          await this.prismaService.product_detail.update(
-            {
-              where: {
-                id: product.id,
-              },
-              data: {
-                quantity: product.quantity - item.quantity,
-              },
+          await this.prismaService.product_detail.update({
+            where: {
+              id: product.id,
             },
-          );
+            data: {
+              quantity: product.quantity - item.quantity,
+            },
+          });
           break;
         }
       }
@@ -152,7 +150,6 @@ export class OrderService {
       ship,
       total: subtotal - discount + ship,
     };
-    
   }
 
   async purchase(user: user, dto: OrderDto) {
@@ -176,7 +173,7 @@ export class OrderService {
         total: order.total,
         note: dto.note,
         createdAt: new Date(),
-        status: 'PLACED',
+        status: 1,
       },
     });
     await this.mailerService.sendMail({
@@ -199,8 +196,8 @@ export class OrderService {
       where: {
         customerId: cus.id,
         status: {
-          not: "CART"
-        }
+          not: 0,
+        },
       },
     });
 
@@ -265,11 +262,12 @@ export class OrderService {
         image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + item.size,
         price: item.currentPrice,
+        salePrice: item.currentSalesPrice,
         quantity: item.quantity,
         total: item.currentPrice * item.quantity,
         totalSale:
           item.currentSalesPrice != null
-            ? item.currentPrice * item.quantity
+            ? item.currentSalesPrice * item.quantity
             : null,
       });
     }
@@ -279,5 +277,5 @@ export class OrderService {
       numberOfItems: numberOfItems._sum.quantity,
       itemList,
     };
-  }*/
+  }
 }

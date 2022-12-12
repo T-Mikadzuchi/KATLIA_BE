@@ -2,8 +2,9 @@ import { VerifyDto } from './dto/verify.dto';
 import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Body, Controller, Patch, Post } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -17,16 +18,16 @@ export class AuthController {
   signin(@Body() dto: AuthDto) {
     return this.authService.signInWithEmailAndPassword(dto);
   }
-  
+
   @Post('verifyEmailForSignUp')
   @ApiBody({
     schema: {
       properties: {
-        'email': { type: 'string' },
-        'password': { type: 'string' },
-        'name': { type: 'string' }
-      }
-    }
+        email: { type: 'string' },
+        password: { type: 'string' },
+        name: { type: 'string' },
+      },
+    },
   })
   verifyEmail(@Body() dto: any) {
     return this.authService.verifyEmailForSignUp(dto);
@@ -36,9 +37,9 @@ export class AuthController {
   @ApiBody({
     schema: {
       properties: {
-        'email': { type: 'string' },
-      }
-    }
+        email: { type: 'string' },
+      },
+    },
   })
   verifyEmailForgotPassword(@Body() dto: any) {
     return this.authService.verifyEmailForgotPassword(dto.email);
@@ -51,6 +52,6 @@ export class AuthController {
 
   @Patch('newPasswordAfterVerify')
   newPasswordAfterVerify(@Body() dto: AuthDto) {
-    return this.authService.newPasswordAfterVerify(dto)
+    return this.authService.newPasswordAfterVerify(dto);
   }
 }

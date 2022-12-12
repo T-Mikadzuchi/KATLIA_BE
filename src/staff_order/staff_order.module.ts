@@ -4,6 +4,6 @@ import { StaffOrderService } from './staff_order.service';
 
 @Module({
   controllers: [StaffOrderController],
-  providers: [StaffOrderService]
+  providers: [StaffOrderService],
 })
 export class StaffOrderModule {}

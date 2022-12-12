@@ -2,12 +2,13 @@ import { DiscountDto } from './dto/discount.dto';
 import { user } from '@prisma/client';
 import { DiscountService } from './discount.service';
 import { Body, Controller, Post, UseGuards, Get } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
+@ApiTags('Admin Discount')
 @Controller('discount')
 export class DiscountController {
   constructor(private discountService: DiscountService) {}
