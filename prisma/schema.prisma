@@ -50,7 +50,6 @@ model import_detail {
 
 model order_detail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  staffId String?
   voucherId String?
   customerId String
   shippingFee Float?

@@ -51,6 +51,9 @@ export class StaffOrderService {
         id: orderId,
       },
     });
+    if (order.status < 1 || order.status > 3)
+      throw new ForbiddenException("Can't update this order");
+
     const sta = order.status + 1;
     let updated: any;
 
@@ -64,6 +67,27 @@ export class StaffOrderService {
           completedAt: new Date(),
         },
       });
+
+      const items = await this.prismaService.order_item.findMany({
+        where: {
+          orderId,
+        },
+      });
+      for (const item of items) {
+        const prod = await this.prismaService.product.findUnique({
+          where: {
+            productId: item.productId,
+          },
+        });
+        await this.prismaService.product.update({
+          where: {
+            productId: item.productId,
+          },
+          data: {
+            sold: prod.sold + item.quantity,
+          },
+        });
+      }
     } else {
       updated = await this.prismaService.order_detail.update({
         where: {
@@ -216,6 +240,7 @@ export class StaffOrderService {
       orderList.push({
         orderId: order.id,
         customerName: order.receiverName,
+        customerPhone: order.receiverPhone,
         address: order.address,
         createDate: order.createdAt,
         total: order.total,
