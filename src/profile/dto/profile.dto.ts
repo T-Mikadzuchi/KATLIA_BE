@@ -34,3 +34,4 @@ export class ProfileDto{
     @ApiProperty()
     note: string
 }
+

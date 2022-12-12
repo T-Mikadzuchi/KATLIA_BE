@@ -7,14 +7,14 @@ export class StaffDto {
   @IsNotEmpty()
   email: string;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    role:Role
-    
-    @ApiProperty()
-    @IsNotEmpty()
-    startAt: Date
+  @ApiProperty()
+  @IsNotEmpty()
+  role: Role;  
 
+  @ApiProperty()
+  @IsNotEmpty()
+  startAt: Date;
+   
   @ApiProperty()
   @IsNotEmpty()
   status: number;
