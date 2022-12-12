@@ -7,7 +7,7 @@ export class StaffDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['ADMIN', 'SALES', 'STORAGE']})
   @IsNotEmpty()
   role: Role;
 

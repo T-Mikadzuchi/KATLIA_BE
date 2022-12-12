@@ -1,3 +1,4 @@
+import { EditProductDto } from './dto/edit-product.dto';
 import { AdminService } from './../admin.service';
 import { ProductDto } from './dto/product.dto';
 import { user } from '@prisma/client';
@@ -91,5 +92,84 @@ export class ProductAdminService {
       product,
       details,
     };
+  }
+
+  async addAnImageForProduct(
+    user: user,
+    file: string,
+    productId: number,
+    colorId: number,
+  ) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const checkProdColor = await this.prismaService.product_detail.findFirst({
+      where: {
+        productId,
+        colorId,
+      },
+    });
+    if (!checkProdColor)
+      throw new ForbiddenException(
+        `Product ID ${productId} doesn't have color ID ${colorId}`,
+      );
+    const up = await this.prismaService.image.create({
+      data: {
+        productId: productId,
+        colorId: colorId,
+        url: file,
+      },
+    });
+    return up;
+  }
+
+  async setDefaultPicForProduct(user: user, id: number, file: string) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const findProd = await this.prismaService.product.findUnique({
+      where: {
+        productId: id,
+      },
+    });
+    if (!findProd) throw new ForbiddenException('Product not found');
+
+    const up = await this.prismaService.product.update({
+      where: {
+        id: findProd.id,
+      },
+      data: {
+        defaultPic: file,
+      },
+    });
+    return up;
+  }
+
+  async editProductInfo(user: user, id: number, dto: EditProductDto) {
+    try {
+      if (!(await this.adminService.isAdmin(user)))
+        throw new ForbiddenException('Permission denied');
+
+      const findProd = await this.prismaService.product.findUnique({
+        where: {
+          productId: id,
+        },
+      });
+      if (!findProd) throw new ForbiddenException('Product not found');
+
+      const up = await this.prismaService.product.update({
+        where: {
+          productId: id,
+        },
+        data: {
+          name: dto.name,
+          description: dto.description,
+          price: dto.price,
+        },
+      });
+      return up;
+    } catch (error) {
+      throw error;
+    }
   }
 }

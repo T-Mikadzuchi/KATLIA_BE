@@ -43,6 +43,10 @@ export class ProfileController {
     @GetUser() user: user,
     @UploadedFile() file: UploadedFileMetadata,
   ) {
-    return this.profileService.updateAva(user, file.storageUrl);
+    try {
+      return this.profileService.updateAva(user, file.storageUrl);
+    } catch (error) {
+      throw error;
+    }
   }
 }
