@@ -150,6 +150,7 @@ export class ProductService {
         if (image.url.startsWith('//')) url = 'https:' + image.url;
         else url = image.url;
         imgList.push({
+          id: image.id,
           url,
         });
       }

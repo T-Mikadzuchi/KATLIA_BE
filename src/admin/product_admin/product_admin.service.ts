@@ -172,4 +172,59 @@ export class ProductAdminService {
       throw error;
     }
   }
+
+  async deleteProductImageByColor(
+    user: user,
+    productId: number,
+    colorId: number,
+  ) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    await this.prismaService.image.deleteMany({
+      where: {
+        productId,
+        colorId,
+      },
+    });
+    return `Images from product ID ${productId}, color ID ${colorId} have been deleted`;
+  }
+
+  async deleteAllImageOfProduct(user: user, id: number) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    await this.prismaService.image.deleteMany({
+      where: {
+        productId: id,
+      },
+    });
+    return `Images from product ID ${id} have been deleted`;
+  }
+
+  async deleteAnImage(user: user, id: string) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    await this.prismaService.image.delete({
+      where: {
+        id,
+      },
+    });
+    return `Image ID ${id} has been deleted`;
+  }
+  async deleteSomeImages(user: user, dto: any) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+    console.log(dto.idList);
+
+    for (const id of dto.idList) {
+      await this.prismaService.image.delete({
+        where: {
+          id,
+        },
+      });
+    }
+    return 'Selected images have been deleted';
+  }
 }
