@@ -14,6 +14,7 @@ import { OrderModule } from './order/order.module';
 import { AddressModule } from './address/address.module';
 import { ProfileModule } from './profile/profile.module';
 import { StaffOrderModule } from './staff_order/staff_order.module';
+import { FilterModule } from './filter/filter.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { StaffOrderModule } from './staff_order/staff_order.module';
     AddressModule,
     ProfileModule,
     StaffOrderModule,
+    FilterModule,
   ],
 })
 export class AppModule {}

@@ -16,6 +16,5 @@ export class StaffDto {
   startAt: Date;
    
   @ApiProperty()
-  @IsNotEmpty()
   status: number;
 }
