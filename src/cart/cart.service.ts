@@ -169,7 +169,7 @@ export class CartService {
         unitSale: salePrice,
         quantity: cartItem.quantity,
         total: product.price * cartItem.quantity,
-        totalSale: salePrice != null ? salePrice * cartItem.quantity : null,
+        totalSale: salePrice != null && salePrice != 0 ? salePrice * cartItem.quantity : null,
       });
     }
     return itemList;

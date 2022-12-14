@@ -178,7 +178,6 @@ export class StaffOrderService {
         },
         data: {
           status: 5,
-          note: dto.cancelReason,
         },
       });
       const getItemOrder = await this.prismaService.order_item.findMany({

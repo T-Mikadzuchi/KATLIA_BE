@@ -81,7 +81,7 @@ export class OrderService {
         unitSale: salePrice,
         quantity: cartItem.quantity,
         total: product.price * cartItem.quantity,
-        totalSale: salePrice != null ? salePrice * cartItem.quantity : null,
+        totalSale: salePrice != null && salePrice != 0 ? salePrice * cartItem.quantity : null,
       });
     }
 
@@ -266,7 +266,7 @@ export class OrderService {
         quantity: item.quantity,
         total: item.currentPrice * item.quantity,
         totalSale:
-          item.currentSalesPrice != null
+          item.currentSalesPrice != null && item.currentSalesPrice != 0
             ? item.currentSalesPrice * item.quantity
             : null,
       });
