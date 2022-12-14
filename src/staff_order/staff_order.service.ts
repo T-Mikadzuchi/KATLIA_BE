@@ -94,19 +94,6 @@ export class StaffOrderService {
             sold: prod.sold + item.quantity,
           },
         });
-        const cus = await this.prismaService.customer.findUnique({
-          where: {
-            id: order.customerId
-          }
-        })
-        await this.prismaService.customer.update({
-          where: {
-            id: cus.id
-          },
-          data: {
-            totalPurchaseAmount: cus.totalPurchaseAmount + order.total
-          }
-        })
       }
     } else {
       updated = await this.prismaService.order_detail.update({
@@ -147,6 +134,15 @@ export class StaffOrderService {
         status_string = 'COMPLETED';
         break;
     }
+
+    await this.prismaService.customer.update({
+      where: {
+        id: customerId,
+      },
+      data: {
+        totalPurchaseAmount: customer.totalPurchaseAmount + order.total,
+      },
+    });
 
     await this.mailerService.sendMail({
       to: email,
