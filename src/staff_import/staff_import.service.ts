@@ -1,18 +1,19 @@
 import { user } from '@prisma/client';
-import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class AdminService {
+export class StaffImportService {
   constructor(private prismaService: PrismaService) {}
 
-  async isAdmin(user: user) {
+  async isPermission(user: user) {
     const check = this.prismaService.staff.findFirst({
       where: {
         userId: user.id,
-        status: 1
-      }
-    })
-    return user.role == 'ADMIN' && check;
+        status: 1,
+      },
+    });
+
+    return (user.role == 'STORAGE' || user.role == 'ADMIN') && check;
   }
 }

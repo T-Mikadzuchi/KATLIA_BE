@@ -1,3 +1,4 @@
+import { ItemsModule } from './staff_import/items/items.module';
 import { CartModule } from './cart/cart.module';
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
@@ -15,6 +16,7 @@ import { AddressModule } from './address/address.module';
 import { ProfileModule } from './profile/profile.module';
 import { StaffOrderModule } from './staff_order/staff_order.module';
 import { FilterModule } from './filter/filter.module';
+import { StaffImportModule } from './staff_import/staff_import.module';
 
 @Module({
   imports: [
@@ -22,20 +24,22 @@ import { FilterModule } from './filter/filter.module';
       isGlobal: true,
     }),
     AuthModule,
-    UserModule,
     PrismaModule,
     ProductModule,
+    FilterModule,
     MailModule,
+    AddressModule,
+    ProfileModule,
     CategoryModule,
     CartModule,
+    OrderModule,
     DiscountModule,
     ProductAdminModule,
     AdminModule,
-    OrderModule,
-    AddressModule,
-    ProfileModule,
     StaffOrderModule,
-    FilterModule,
+    StaffImportModule,
+    ItemsModule,
+    UserModule,
   ],
 })
 export class AppModule {}

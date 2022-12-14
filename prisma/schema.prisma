@@ -42,10 +42,22 @@ model image {
 
 model storage_import {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  staffName String?
+  staffId String
+  surcharge Float?
+  total Float?
+  status Int @default(0)
+  date DateTime?
 }
 
 model import_detail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  importId String
+  productId Int
+  size String
+  colorId Int
+  quantity Int
+  unitPrice Float
 }
 
 model order_detail {

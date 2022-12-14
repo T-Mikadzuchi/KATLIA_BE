@@ -14,7 +14,14 @@ export class StaffOrderService {
   ) {}
 
   async isPermission(user: user) {
-    return user.role == 'SALES' || user.role == 'ADMIN';
+    const check = this.prismaService.staff.findFirst({
+      where: {
+        userId: user.id,
+        status: 1,
+      },
+    });
+
+    return (user.role == 'SALES' || user.role == 'ADMIN') && check;
   }
 
   async updateQuatity(
@@ -87,6 +94,19 @@ export class StaffOrderService {
             sold: prod.sold + item.quantity,
           },
         });
+        const cus = await this.prismaService.customer.findUnique({
+          where: {
+            id: order.customerId
+          }
+        })
+        await this.prismaService.customer.update({
+          where: {
+            id: cus.id
+          },
+          data: {
+            totalPurchaseAmount: cus.totalPurchaseAmount + order.total
+          }
+        })
       }
     } else {
       updated = await this.prismaService.order_detail.update({
