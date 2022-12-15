@@ -48,6 +48,34 @@ export class ProductAdminService {
     return result;
   }
 
+  async getUndeletedProducts() {
+    const categories = await this.categoryService.getAll();
+    const result: any[] = [];
+    const idList: number[] = [];
+    for (const cate of categories) {
+      const products = await this.productService.getProductByCategoryId(
+        cate.categoryId,
+      );
+
+      for (const product of products) {
+        idList.push(product.id);
+        result.push({
+          id: product.id,
+          name: product.name,
+          colorNumber: product.colorNumber,
+          price: product.price,
+          sold: product.sold,
+          salePrice: product.salePrice,
+          image: product.image,
+          categoryId: cate.categoryId,
+          category: cate.category,
+          gender: cate.gender,
+        });
+      }
+    }
+    return result;
+  }
+
   async addNewProduct(user: user, dto: ProductDto) {
     if (!(await this.adminService.isAdmin(user)))
       throw new ForbiddenException('Permission denied');

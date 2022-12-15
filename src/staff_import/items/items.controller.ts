@@ -1,3 +1,4 @@
+import { StaffImportService } from './../staff_import.service';
 import { EditItemDto } from './dto/edit-item.dto';
 import { ItemDto } from './dto/item.dto';
 import { ItemsService } from './items.service';
@@ -21,11 +22,14 @@ import { JwtGuard } from 'src/auth/guard';
 @ApiTags('Import Items')
 @Controller('items')
 export class ItemsController {
-  constructor(private itemsService: ItemsService) {}
+  constructor(
+    private itemsService: ItemsService,
+    private staffImportService: StaffImportService,
+  ) {}
 
   @Get('getImportFormInfo')
   async createImportForm(@GetUser() user: user) {
-    return this.itemsService.getImportForm(user);
+    return this.staffImportService.getImportForm(user);
   }
 
   @ApiBody({
@@ -106,6 +110,6 @@ export class ItemsController {
 
   @Get('getItemDetailForUpdate/:id')
   async getItemDetailForUpdate(@GetUser() user: user, @Param('id') id: string) {
-    return this.itemsService.getItemDetailForUpdate(user, id)
+    return this.itemsService.getItemDetailForUpdate(user, id);
   }
 }

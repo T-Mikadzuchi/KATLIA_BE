@@ -38,6 +38,11 @@ export class ProductAdminController {
     return this.productAdminService.getAllProducts();
   }
 
+  @Get('getUndeletedProducts')
+  getUndeletedProducts() {
+    return this.productAdminService.getUndeletedProducts();
+  }
+
   @Post('addProducts')
   addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
     return this.productAdminService.addNewProduct(user, dto);
@@ -160,9 +165,9 @@ export class ProductAdminController {
     return this.productAdminService.deleteSomeImages(user, dto);
   }
 
-  @Delete('deleteProduct/:id') 
+  @Delete('deleteProduct/:id')
   async deleteProduct(@GetUser() user: user, @Param('id') id: string) {
-    const prodId = parseInt(id)
+    const prodId = parseInt(id);
     return this.productAdminService.deleteProduct(user, prodId);
   }
 }

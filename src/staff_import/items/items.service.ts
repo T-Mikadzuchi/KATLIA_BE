@@ -12,66 +12,13 @@ export class ItemsService {
     private staffImportService: StaffImportService,
   ) {}
 
-  async findStaff(userId: string) {
-    const staff = await this.prismaService.staff.findUnique({
-      where: {
-        userId,
-      },
-    });
-    return staff;
-  }
-
-  async findForm(id: string) {
-    return await this.prismaService.storage_import.findFirst({
-      where: {
-        staffId: id,
-        status: 0,
-      },
-    });
-  }
-
-  async getImportForm(user: user) {
-    if (!(await this.staffImportService.isPermission(user)))
-      throw new ForbiddenException('Permission denied');
-
-    const staff = await this.findStaff(user.id);
-    let form = await this.findForm(staff.id);
-
-    if (!form) {
-      form = await this.prismaService.storage_import.create({
-        data: {
-          staffId: staff.id,
-        },
-      });
-    }
-    form.staffName = user.fullName;
-    const total = await this.getTotal(form);
-    form.total = total;
-    return form;
-  }
-
-  async getTotal(form: any) {
-    let total = 0;
-    const itemList = await this.prismaService.import_detail.findMany({
-      where: {
-        importId: form.id,
-      },
-    });
-
-    for (const item of itemList) {
-      total += item.unitPrice * item.quantity;
-    }
-    total = form.surcharge != null ? total + form.surcharge : total;
-
-    return total;
-  }
 
   async addItemsIntoForm(user: user, dto: Array<ItemDto>) {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
     if (!form) return 'wtf';
 
     const itemList: any[] = [];
@@ -126,7 +73,7 @@ export class ItemsService {
         itemList.push(create);
       }
     }
-    const total = await this.getTotal(form);
+    const total = await this.staffImportService.getTotal(form);
 
     return {
       total,
@@ -183,8 +130,8 @@ export class ItemsService {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
 
     if (!form) throw new ForbiddenException('No form exist');
 
@@ -233,8 +180,8 @@ export class ItemsService {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
 
     if (!form) throw new ForbiddenException('No form exist');
     if (!(await this.isItemInForm(form.id, id)))
@@ -252,8 +199,8 @@ export class ItemsService {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
 
     if (!form) throw new ForbiddenException('No form exist');
 
@@ -275,8 +222,8 @@ export class ItemsService {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
 
     if (!form) throw new ForbiddenException('No form exist');
 
@@ -299,8 +246,8 @@ export class ItemsService {
     if (!(await this.staffImportService.isPermission(user)))
       throw new ForbiddenException('Permission denied');
 
-    const staff = await this.findStaff(user.id);
-    const form = await this.findForm(staff.id);
+    const staff = await this.staffImportService.findStaff(user.id);
+    const form = await this.staffImportService.findForm(staff.id);
 
     if (!form) throw new ForbiddenException('No form exist');
 
