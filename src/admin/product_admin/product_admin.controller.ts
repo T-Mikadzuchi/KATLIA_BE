@@ -159,4 +159,10 @@ export class ProductAdminController {
   async deleteSomeImages(@GetUser() user: user, @Body() dto: any) {
     return this.productAdminService.deleteSomeImages(user, dto);
   }
+
+  @Delete('deleteProduct/:id') 
+  async deleteProduct(@GetUser() user: user, @Param('id') id: string) {
+    const prodId = parseInt(id)
+    return this.productAdminService.deleteProduct(user, prodId);
+  }
 }

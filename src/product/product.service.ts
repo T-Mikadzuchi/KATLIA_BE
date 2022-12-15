@@ -41,6 +41,26 @@ export class ProductService {
     return salePrice;
   }
 
+  async includeDeletedByCategory(categoryId: number, productList: any) {
+    const findProduct = await this.prismaService.product.findMany({
+      where: {
+        categoryId,
+      },
+    });
+    for (const product of findProduct) {
+      productList.push({
+        id: product.productId,
+        name: product.name,
+        colorNumber: product.colorNumber,
+        price: product.price,
+        sold: product.sold,
+        salePrice: await this.setSalePrice(product),
+        image: product.defaultPic,
+        isDeleted: product.isDeleted,
+      });
+    }
+  }
+
   async displayProductListByCategory(categoryId: number, productList: any) {
     const findProduct = await this.prismaService.product.findMany({
       where: {
@@ -94,6 +114,12 @@ export class ProductService {
     return productList;
   }
 
+  async includeDeletedByCategoryId(categoryId: number) {
+    const productList: any[] = [];
+    await this.includeDeletedByCategory(categoryId, productList);
+    return productList;
+  }
+
   async getTop4(gender: string) {
     const products = await this.getProductByGender(gender);
     const top4 = await products
@@ -113,6 +139,8 @@ export class ProductService {
     if (!product) {
       throw new ForbiddenException('Product does not exist');
     }
+    if (product.isDeleted != 0)
+      throw new ForbiddenException('This product is deleted');
 
     const productColors = await this.getProductColors(product.productId);
 

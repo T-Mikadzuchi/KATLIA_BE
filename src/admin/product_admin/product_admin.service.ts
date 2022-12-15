@@ -21,7 +21,7 @@ export class ProductAdminService {
     const result: any[] = [];
     const idList: number[] = [];
     for (const cate of categories) {
-      const products = await this.productService.getProductByCategoryId(
+      const products = await this.productService.includeDeletedByCategoryId(
         cate.categoryId,
       );
 
@@ -38,6 +38,7 @@ export class ProductAdminService {
           categoryId: cate.categoryId,
           category: cate.category,
           gender: cate.gender,
+          isDeleted: product.isDeleted,
         });
       }
     }
@@ -226,5 +227,27 @@ export class ProductAdminService {
       });
     }
     return 'Selected images have been deleted';
+  }
+
+  async deleteProduct(user: user, productId: number) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const findProd = await this.prismaService.product.findUnique({
+      where: {
+        productId,
+      },
+    });
+    if (!findProd) throw new ForbiddenException('Product not found');
+
+    await this.prismaService.product.update({
+      where: {
+        productId,
+      },
+      data: {
+        isDeleted: 1,
+      },
+    });
+    return 'Product deleted';
   }
 }

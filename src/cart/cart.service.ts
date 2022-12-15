@@ -126,6 +126,21 @@ export class CartService {
           size: cartItem.size,
         },
       });
+
+      const product = await this.prismaService.product.findUnique({
+        where: {
+          productId: cartItem.productId,
+        },
+      });
+
+      if (product.isDeleted != 0) {
+        await this.deleteCartItem(user, cartItem.id);
+        itemList.push({
+          message: `Item ${item.productId} has been deleted`,
+        });
+        continue;
+      }
+
       if (cartItem.quantity > item.quantity) {
         if (item.quantity == 0) {
           await this.deleteCartItem(user, cartItem.id);
@@ -145,11 +160,6 @@ export class CartService {
           message = `Item ${item.productId} color ${item.colorId} size ${item.size} has reached its maximum quantity`;
         }
       } else message = 'ok';
-      const product = await this.prismaService.product.findUnique({
-        where: {
-          productId: cartItem.productId,
-        },
-      });
 
       const salePrice = await this.productService.setSalePrice(product);
 
@@ -169,7 +179,10 @@ export class CartService {
         unitSale: salePrice,
         quantity: cartItem.quantity,
         total: product.price * cartItem.quantity,
-        totalSale: salePrice != null && salePrice != 0 ? salePrice * cartItem.quantity : null,
+        totalSale:
+          salePrice != null && salePrice != 0
+            ? salePrice * cartItem.quantity
+            : null,
       });
     }
     return itemList;
