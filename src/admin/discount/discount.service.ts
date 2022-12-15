@@ -33,29 +33,30 @@ export class DiscountService {
     return checkDiscount;
   }
 
-  async addNewDiscount(user: user, dto: DiscountDto) {
-    if (!(await this.adminService.isAdmin(user)))
-      throw new ForbiddenException('Permission denied');
-
-    if (!dto.discountName || !dto.percent || !dto.endAt || !dto.startAt)
-      throw new ForbiddenException('Missing required parameters');
-
+  discountValidation(dto: DiscountDto) {
     if (dto.startAt > dto.endAt) {
       throw new ForbiddenException(
         'Invalid input, end time must be after begin',
       );
     }
     if (Date.parse(dto.startAt.toString()) <= Date.now())
-      throw new ForbiddenException('Only add future discount');
+      throw new ForbiddenException('Only future date accepted');
 
-    // const checkDiscount = await this.checkDiscount(dto);
-    // if (checkDiscount)
-    //   throw new ForbiddenException('Discount exist during the input time');
+    if (dto.percent <= 0 || dto.percent >= 100)
+      throw new ForbiddenException('Percent must >0 and <100');
+    return;
+  }
+
+  async addNewDiscount(user: user, dto: DiscountDto) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    this.discountValidation(dto);
 
     const newDiscount = await this.prismaService.product_discount.create({
       data: {
         discountName: dto.discountName,
-        percent: dto.percent,
+        percent: dto.percent / 100,
         startAt: dto.startAt,
         endAt: dto.endAt,
       },
@@ -82,7 +83,7 @@ export class DiscountService {
       discountResult.push({
         id: discount.id,
         discountName: discount.discountName,
-        percent: discount.percent,
+        percent: discount.percent * 100,
         startAt: discount.startAt,
         endAt: discount.endAt,
         status,
@@ -90,5 +91,86 @@ export class DiscountService {
       });
     }
     return discountResult;
+  }
+
+  async editListProductsForDiscount(user: user, id: string, ls: number[]) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const updated: any[] = [];
+
+    await this.prismaService.product.updateMany({
+      where: {
+        discountId: id,
+      },
+      data: {
+        discountId: null,
+      },
+    });
+
+    for (const item of ls) {
+      updated.push(
+        await this.prismaService.product.update({
+          where: {
+            productId: item,
+          },
+          data: {
+            discountId: id,
+          },
+        }),
+      );
+    }
+    return updated;
+  }
+
+  async editDiscountInfo(user: user, id: string, dto: DiscountDto) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const disc = await this.prismaService.product_discount.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (disc.endAt < new Date())
+      throw new ForbiddenException("Can't edit ended promotion");
+    if (disc.startAt < new Date())
+      throw new ForbiddenException('Only edit product list');
+
+    this.discountValidation(dto);
+
+    return await this.prismaService.product_discount.update({
+      where: {
+        id,
+      },
+      data: {
+        discountName: dto.discountName,
+        percent: dto.percent / 100,
+        startAt: dto.startAt,
+        endAt: dto.endAt,
+      },
+    });
+  }
+
+  async deleteDiscount(user: user, id: string) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+
+    const disc = await this.prismaService.product_discount.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (disc.startAt < new Date())
+      throw new ForbiddenException("Can't delete this discount");
+
+    await this.prismaService.product_discount.delete({
+      where: {
+        id,
+      },
+    });
+    return 'Discount deleted';
   }
 }
