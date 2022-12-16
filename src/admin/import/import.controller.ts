@@ -15,7 +15,7 @@ export class ImportController {
     confirmImport(@GetUser() user:user, @Param('id')  importId:string){
         return this.importService.confirmImport(user,importId);
     }
-    @Put('cancelImport:/id')
+    @Put('cancelImport/:id')
     cancelImport(@GetUser() user: user,@Param('id') importId: string){
         return this.importService.cancelImport(user,importId);
     }
