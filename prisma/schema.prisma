@@ -65,7 +65,7 @@ model order_detail {
   voucherId String?
   customerId String
   shippingFee Float?
-  paymentId String?
+  payment PaymentMethod?
   status Int @default(0)
   createdAt DateTime?
   completedAt DateTime?
@@ -85,12 +85,6 @@ model order_item {
   colorId Int
   quantity Int
   currentSalesPrice Float?
-}
-
-model payment {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  method PaymentMethod 
-  status Int
 }
 
 enum PaymentMethod {

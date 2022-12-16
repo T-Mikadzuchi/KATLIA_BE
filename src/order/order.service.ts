@@ -81,7 +81,10 @@ export class OrderService {
         unitSale: salePrice,
         quantity: cartItem.quantity,
         total: product.price * cartItem.quantity,
-        totalSale: salePrice != null && salePrice != 0 ? salePrice * cartItem.quantity : null,
+        totalSale:
+          salePrice != null && salePrice != 0
+            ? salePrice * cartItem.quantity
+            : null,
       });
     }
 
@@ -154,12 +157,7 @@ export class OrderService {
 
   async purchase(user: user, dto: OrderDto) {
     const order = await this.getOrder(user);
-    const payment = await this.prismaService.payment.create({
-      data: {
-        method: dto.payment == 0 ? 'COD' : dto.payment == 1 ? 'CARD' : 'PAYPAL',
-        status: dto.payment == 0 ? 0 : 1,
-      },
-    });
+
     const placed = await this.prismaService.order_detail.update({
       where: {
         id: order.id,
@@ -168,7 +166,8 @@ export class OrderService {
         receiverName: dto.receiverName,
         receiverPhone: dto.receiverPhone,
         address: dto.address,
-        paymentId: payment.id,
+        payment:
+          dto.payment == 0 ? 'COD' : dto.payment == 1 ? 'CARD' : 'PAYPAL',
         shippingFee: order.ship,
         total: order.total,
         note: dto.note,
