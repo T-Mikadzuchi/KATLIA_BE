@@ -45,6 +45,7 @@ export class ProductAdminController {
 
   @Post('addProducts')
   addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
+    dto.sizeList = dto.sizeList.toUpperCase()
     return this.productAdminService.addNewProduct(user, dto);
   }
 

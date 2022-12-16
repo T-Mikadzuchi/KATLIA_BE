@@ -47,6 +47,30 @@ export class ProductService {
         categoryId,
       },
     });
+
+    await this.customProductListForDeleted(findProduct, productList);
+  }
+
+  async customProductList(findProduct: any, productList: any) {
+    for (const product of findProduct) {
+      if (!product) continue;
+      if (product.isDeleted !== 0) {
+        console.log(product);
+        continue;
+      }
+      productList.push({
+        id: product.productId,
+        name: product.name,
+        colorNumber: product.colorNumber,
+        price: product.price,
+        sold: product.sold,
+        salePrice: await this.setSalePrice(product),
+        image: product.defaultPic,
+      });
+    }
+  }
+
+  async customProductListForDeleted(findProduct: any, productList: any) {
     for (const product of findProduct) {
       productList.push({
         id: product.productId,
@@ -66,33 +90,18 @@ export class ProductService {
       where: {
         categoryId,
         isDeleted: 0,
-      },
-      select: {
-        productId: true,
-        name: true,
-        price: true,
-        sold: true,
-        defaultPic: true,
-        colorNumber: true,
-      },
+      }
     });
-    for (const product of findProduct) {
-      productList.push({
-        id: product.productId,
-        name: product.name,
-        colorNumber: product.colorNumber,
-        price: product.price,
-        sold: product.sold,
-        salePrice: await this.setSalePrice(product),
-        image: product.defaultPic,
-      });
-    }
+    await this.customProductList(findProduct, productList);
   }
 
   async getProductByGender(gender: string) {
     const categoryList = await this.prismaService.product_category.findMany({
       where: {
-        gender: gender,
+        gender: {
+          equals: gender,
+          mode: 'insensitive',
+        },
       },
       select: {
         categoryId: true,
@@ -122,7 +131,7 @@ export class ProductService {
 
   async getTop4(gender: string) {
     const products = await this.getProductByGender(gender);
-    const top4 = await products
+    const top4 = products
       .sort((a, b) => {
         return b.sold - a.sold;
       })
@@ -221,18 +230,9 @@ export class ProductService {
       take: 4,
     });
     const productList: any[] = [];
-    for (const product of findProduct) {
-      const productColor = await this.getProductColors(product.productId);
-      productList.push({
-        id: product.productId,
-        name: product.name,
-        colorNumber: productColor.length,
-        price: product.price,
-        discountId: product.discountId,
-        sold: product.sold,
-        image: product.defaultPic,
-      });
-    }
+
+    await this.customProductList(findProduct, productList);
+
     return productList;
   }
 }
