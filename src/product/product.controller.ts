@@ -35,4 +35,15 @@ export class ProductController {
     id = parseInt(id.toString());
     return this.productService.get4SimilarItems(id);
   }
+
+  @Get('getSaleProductByGender/:gender')
+  getSaleProductByGender(@Param('gender') gender: string) {
+    return this.productService.getSaleProductByGender(gender);
+  }
+
+  @Get('getSaleProductByCategoryId/:categoryId')
+  getSaleProductByCategoryId(@Param('categoryId') categoryId: string) {
+    const id = parseInt(categoryId)
+    return this.productService.getSaleProductByCategoryId(id)
+  }
 }
