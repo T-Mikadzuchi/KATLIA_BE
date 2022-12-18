@@ -179,3 +179,13 @@ model mail_otp {
   name String?
   otp Int
 }
+
+model feedback {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String
+  productId Int
+  username String
+  photo? String
+  rate Int
+  comment? String
+}
