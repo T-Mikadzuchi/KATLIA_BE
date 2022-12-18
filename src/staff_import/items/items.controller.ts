@@ -29,7 +29,7 @@ export class ItemsController {
 
   @Get('getImportFormInfo')
   async createImportForm(@GetUser() user: user) {
-    return this.staffImportService.getImportForm(user);
+    return await this.staffImportService.getImportForm(user);
   }
 
   @ApiBody({
@@ -58,7 +58,7 @@ export class ItemsController {
   })
   @Post('addItemsIntoForm')
   async addItemsIntoForm(@GetUser() user: user, @Body() dto: Array<ItemDto>) {
-    return this.itemsService.addItemsIntoForm(user, dto);
+    return await this.itemsService.addItemsIntoForm(user, dto);
   }
 
   @Get('getProductSizeForImport/:id')
@@ -91,12 +91,12 @@ export class ItemsController {
   })
   @Delete('deleteAnItem/:id')
   async deleteAnItem(@GetUser() user: user, @Param('id') id: string) {
-    return this.itemsService.deleteAnItem(user, id);
+    return await this.itemsService.deleteAnItem(user, id);
   }
 
   @Delete('deleteAllItems')
   async deleteAllItems(@GetUser() user: user) {
-    return this.itemsService.deleteAllItems(user);
+    return await this.itemsService.deleteAllItems(user);
   }
 
   @Patch('editAnItem/:id')
@@ -105,7 +105,7 @@ export class ItemsController {
     @Param('id') id: string,
     @Body() dto: EditItemDto,
   ) {
-    return this.itemsService.editAnItem(user, id, dto);
+    return await this.itemsService.editAnItem(user, id, dto);
   }
 
   @Get('getItemDetailForUpdate/:id')

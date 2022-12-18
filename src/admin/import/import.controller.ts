@@ -17,11 +17,11 @@ import { user } from '@prisma/client';
 export class ImportController {
   constructor(private importService: ImportService) {}
   @Put('confirmImport/:id')
-  confirmImport(@GetUser() user: user, @Param('id') importId: string) {
-    return this.importService.confirmImport(user, importId);
+  async confirmImport(@GetUser() user: user, @Param('id') importId: string) {
+    return await this.importService.confirmImport(user, importId);
   }
   @Put('cancelImport/:id')
-  cancelImport(@GetUser() user: user, @Param('id') importId: string) {
-    return this.importService.cancelImport(user, importId);
+  async cancelImport(@GetUser() user: user, @Param('id') importId: string) {
+    return await this.importService.cancelImport(user, importId);
   }
 }

@@ -44,9 +44,9 @@ export class ProductAdminController {
   }
 
   @Post('addProducts')
-  addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
-    dto.sizeList = dto.sizeList.toUpperCase()
-    return this.productAdminService.addNewProduct(user, dto);
+  async addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
+    dto.sizeList = dto.sizeList.toUpperCase();
+    return await this.productAdminService.addNewProduct(user, dto);
   }
 
   @ApiQuery({ name: 'productId', type: 'string' })
@@ -66,7 +66,7 @@ export class ProductAdminController {
     try {
       const prod = parseInt(productId);
       const color = parseInt(colorId);
-      return this.productAdminService.addAnImageForProduct(
+      return await this.productAdminService.addAnImageForProduct(
         user,
         file.storageUrl,
         prod,
@@ -85,15 +85,13 @@ export class ProductAdminController {
   )
   async setDefaultPicForProduct(
     @GetUser() user: user,
-    @UploadedFile() file: UploadedFileMetadata,
     @Param('id') id: string,
   ) {
     try {
       const prodId = parseInt(id);
-      return this.productAdminService.setDefaultPicForProduct(
+      return await this.productAdminService.setDefaultPicForProduct(
         user,
         prodId,
-        file.storageUrl,
       );
     } catch (error) {
       throw error;
@@ -107,7 +105,7 @@ export class ProductAdminController {
     @Body() dto: EditProductDto,
   ) {
     const prodId = parseInt(id);
-    return this.productAdminService.editProductInfo(user, prodId, dto);
+    return await this.productAdminService.editProductInfo(user, prodId, dto);
   }
 
   @ApiQuery({ name: 'productId', type: 'string' })
@@ -120,7 +118,7 @@ export class ProductAdminController {
   ) {
     const prod = parseInt(productId);
     const color = parseInt(colorId);
-    return this.productAdminService.deleteProductImageByColor(
+    return await this.productAdminService.deleteProductImageByColor(
       user,
       prod,
       color,
@@ -137,7 +135,7 @@ export class ProductAdminController {
     @Param('id') productId: string,
   ) {
     const id = parseInt(productId);
-    return this.productAdminService.deleteAllImageOfProduct(user, id);
+    return await this.productAdminService.deleteAllImageOfProduct(user, id);
   }
 
   @ApiParam({
@@ -146,7 +144,7 @@ export class ProductAdminController {
   })
   @Delete('deleteAnImage/:id')
   async deleteAnImage(@GetUser() user: user, @Param('id') id: string) {
-    return this.productAdminService.deleteAnImage(user, id);
+    return await this.productAdminService.deleteAnImage(user, id);
   }
 
   @ApiBody({
@@ -163,12 +161,12 @@ export class ProductAdminController {
   })
   @Delete('deleteSomeImages')
   async deleteSomeImages(@GetUser() user: user, @Body() dto: any) {
-    return this.productAdminService.deleteSomeImages(user, dto);
+    return await this.productAdminService.deleteSomeImages(user, dto);
   }
 
   @Delete('deleteProduct/:id')
   async deleteProduct(@GetUser() user: user, @Param('id') id: string) {
     const prodId = parseInt(id);
-    return this.productAdminService.deleteProduct(user, prodId);
+    return await this.productAdminService.deleteProduct(user, prodId);
   }
 }

@@ -23,23 +23,23 @@ export class AddressController {
   constructor(private addressService: AddressService) {}
 
   @Get('getAllAddress')
-  getCart(@GetUser() user: user) {
+  getAllAddress(@GetUser() user: user) {
     return this.addressService.getAllAddress(user);
   }
   @Put('updateAddress/:id')
-  updateAddress(
+  async updateAddress(
     @GetUser() user: user,
     @Param('id') addressId: string,
     @Body() dto: AddressDto,
   ) {
-    return this.addressService.updateAddress(user, addressId, dto);
+    return await this.addressService.updateAddress(user, addressId, dto);
   }
   @Delete('deleteAdress/:id')
-  deleteAdress(@GetUser() user: user, @Param('id') addressId: string) {
-    return this.addressService.deleteAddress(user, addressId);
+  async deleteAdress(@GetUser() user: user, @Param('id') addressId: string) {
+    return await this.addressService.deleteAddress(user, addressId);
   }
   @Post('addAddress')
-  addAddress(@GetUser() user: user, @Body() dto: AddressDto) {
-    return this.addressService.addAddress(user, dto);
+  async addAddress(@GetUser() user: user, @Body() dto: AddressDto) {
+    return await this.addressService.addAddress(user, dto);
   }
 }

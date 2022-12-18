@@ -24,8 +24,8 @@ export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
   @Put('updateProfile')
-  updateAddress(@GetUser() user: user, @Body() dto: ProfileDto) {
-    return this.profileService.updateProfile(user, dto);
+  async updateAddress(@GetUser() user: user, @Body() dto: ProfileDto) {
+    return await this.profileService.updateProfile(user, dto);
   }
 
   @Get('getProfile')
@@ -44,7 +44,7 @@ export class ProfileController {
     @UploadedFile() file: UploadedFileMetadata,
   ) {
     try {
-      return this.profileService.updateAva(user, file.storageUrl);
+      return await this.profileService.updateAva(user, file.storageUrl);
     } catch (error) {
       throw error;
     }

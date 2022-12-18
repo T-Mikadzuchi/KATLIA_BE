@@ -26,16 +26,16 @@ export class StaffController {
   }
 
   @Put('updateStaff/:id')
-  updateAddress(
+  async updateStaff(
     @GetUser() user: user,
     @Param('id') userId: string,
     @Body() dto: StaffDto,
   ) {
-    return this.staffSerVice.updateStaff(user, userId, dto);
+    return await this.staffSerVice.updateStaff(user, userId, dto);
   }
 
   @Post('addStaff')
-  addAddress(@GetUser() user: user, @Body() dto: StaffDto) {
-    return this.staffSerVice.addStaff(user, dto);
+  async addAddress(@GetUser() user: user, @Body() dto: StaffDto) {
+    return await this.staffSerVice.addStaff(user, dto);
   }
 }

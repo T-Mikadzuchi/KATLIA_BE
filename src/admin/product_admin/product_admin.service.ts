@@ -152,7 +152,7 @@ export class ProductAdminService {
     return up;
   }
 
-  async setDefaultPicForProduct(user: user, id: number, file: string) {
+  async setDefaultPicForProduct(user: user, id: number) {
     if (!(await this.adminService.isAdmin(user)))
       throw new ForbiddenException('Permission denied');
 
@@ -163,12 +163,18 @@ export class ProductAdminService {
     });
     if (!findProd) throw new ForbiddenException('Product not found');
 
+    const pic = await this.prismaService.image.findFirst({
+      where: {
+        productId: id,
+      },
+    });
+
     const up = await this.prismaService.product.update({
       where: {
         id: findProd.id,
       },
       data: {
-        defaultPic: file,
+        defaultPic: pic.url,
       },
     });
     return up;

@@ -10,13 +10,13 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signUpByEmailAndOTP')
-  signup(@Body() dto: VerifyDto) {
-    return this.authService.signUpByEmailAndOTP(dto);
+  async signup(@Body() dto: VerifyDto) {
+    return await this.authService.signUpByEmailAndOTP(dto);
   }
 
   @Post('signInWithEmailAndPassword')
-  signin(@Body() dto: AuthDto) {
-    return this.authService.signInWithEmailAndPassword(dto);
+  async signin(@Body() dto: AuthDto) {
+    return await this.authService.signInWithEmailAndPassword(dto);
   }
 
   @Post('verifyEmailForSignUp')
@@ -29,8 +29,8 @@ export class AuthController {
       },
     },
   })
-  verifyEmail(@Body() dto: any) {
-    return this.authService.verifyEmailForSignUp(dto);
+  async verifyEmail(@Body() dto: any) {
+    return await this.authService.verifyEmailForSignUp(dto);
   }
 
   @Post('verifyEmailForgotPassword')
@@ -41,17 +41,17 @@ export class AuthController {
       },
     },
   })
-  verifyEmailForgotPassword(@Body() dto: any) {
-    return this.authService.verifyEmailForgotPassword(dto.email);
+  async verifyEmailForgotPassword(@Body() dto: any) {
+    return await this.authService.verifyEmailForgotPassword(dto.email);
   }
 
   @Post('checkOTPForgotPassword')
-  checkOTPForgotPassword(@Body() dto: VerifyDto) {
-    return this.authService.checkOTPForgotPassword(dto);
+  async checkOTPForgotPassword(@Body() dto: VerifyDto) {
+    return await this.authService.checkOTPForgotPassword(dto);
   }
 
   @Patch('newPasswordAfterVerify')
-  newPasswordAfterVerify(@Body() dto: AuthDto) {
-    return this.authService.newPasswordAfterVerify(dto);
+  async newPasswordAfterVerify(@Body() dto: AuthDto) {
+    return await this.authService.newPasswordAfterVerify(dto);
   }
 }

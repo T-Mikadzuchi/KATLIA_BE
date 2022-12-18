@@ -24,8 +24,8 @@ export class CartController {
   constructor(private cartService: CartService) {}
 
   @Post('addItemToCart')
-  addItemToCart(@GetUser() user: user, @Body() dto: CartDto) {
-    return this.cartService.addItemToCart(user, dto);
+  async addItemToCart(@GetUser() user: user, @Body() dto: CartDto) {
+    return await this.cartService.addItemToCart(user, dto);
   }
 
   @Get('getCart')
@@ -39,9 +39,9 @@ export class CartController {
     description: 'Là id của cái cart item, ko phải product',
   })
   @Delete('deleteCartItem/:id')
-  deleteCartItem(@GetUser() user: user, @Param('id') id: string) {
+  async deleteCartItem(@GetUser() user: user, @Param('id') id: string) {
     if (!id) return new ForbiddenException("Pls enter cart item's id");
-    return this.cartService.deleteCartItem(user, id);
+    return await this.cartService.deleteCartItem(user, id);
   }
 
   @Patch('updateCartItem')
@@ -53,8 +53,8 @@ export class CartController {
       },
     },
   })
-  updateCartItem(@GetUser() user: user, @Body() dto: any) {
+  async updateCartItem(@GetUser() user: user, @Body() dto: any) {
     if (!dto.id) return new ForbiddenException("Pls enter cart item's id");
-    return this.cartService.updateCartItem(user, dto.id, dto.number);
+    return await this.cartService.updateCartItem(user, dto.id, dto.number);
   }
 }

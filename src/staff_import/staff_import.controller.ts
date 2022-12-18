@@ -14,8 +14,8 @@ export class StaffImportController {
   constructor(private staffImportService: StaffImportService) {}
 
   @Patch('import')
-  import(@GetUser() user: user, @Body() dto: ImportDto) {
-    return this.staffImportService.import(user, dto);
+  async import(@GetUser() user: user, @Body() dto: ImportDto) {
+    return await this.staffImportService.import(user, dto);
   }
 
   @Get('history')

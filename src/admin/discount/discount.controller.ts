@@ -23,8 +23,8 @@ import { GetUser } from 'src/auth/decorator';
 export class DiscountController {
   constructor(private discountService: DiscountService) {}
   @Post('addNewDiscount')
-  addNewDiscount(@GetUser() user: user, @Body() dto: DiscountDto) {
-    return this.discountService.addNewDiscount(user, dto);
+  async addNewDiscount(@GetUser() user: user, @Body() dto: DiscountDto) {
+    return await this.discountService.addNewDiscount(user, dto);
   }
 
   @Get('getAllDiscountList')
@@ -45,7 +45,7 @@ export class DiscountController {
     name: 'id',
   })
   @Put('editListProductsForDiscount/:id')
-  editListProductsForDiscount(
+  async editListProductsForDiscount(
     @GetUser() user: user,
     @Param('id') id: string,
     @Body() ls: number[],
@@ -54,16 +54,16 @@ export class DiscountController {
   }
 
   @Patch('editDiscountInfo/:id')
-  editDiscountInfo(
+  async editDiscountInfo(
     @GetUser() user: user,
     @Param('id') id: string,
     @Body() dto: DiscountDto,
   ) {
-    return this.discountService.editDiscountInfo(user, id, dto);
+    return await this.discountService.editDiscountInfo(user, id, dto);
   }
 
   @Delete('deleteDiscount/:id')
-  deleteDiscount(@GetUser() user: user, @Param('id') id: string) {
-    return this.discountService.deleteDiscount(user, id);
+  async deleteDiscount(@GetUser() user: user, @Param('id') id: string) {
+    return await this.discountService.deleteDiscount(user, id);
   }
 }

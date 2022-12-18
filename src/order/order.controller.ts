@@ -14,8 +14,8 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Put('purchase')
-  purchase(@GetUser() user: user, @Body() dto: OrderDto) {
-    return this.orderService.purchase(user, dto);
+  async purchase(@GetUser() user: user, @Body() dto: OrderDto) {
+    return await this.orderService.purchase(user, dto);
   }
 
   @Get('history')
