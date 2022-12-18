@@ -17,6 +17,7 @@ import { ProfileModule } from './profile/profile.module';
 import { StaffOrderModule } from './staff_order/staff_order.module';
 import { FilterModule } from './filter/filter.module';
 import { StaffImportModule } from './staff_import/staff_import.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { StaffImportModule } from './staff_import/staff_import.module';
     StaffImportModule,
     ItemsModule,
     UserModule,
+    StatisticsModule,
   ],
 })
 export class AppModule {}
