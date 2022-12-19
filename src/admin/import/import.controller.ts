@@ -9,9 +9,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator';
 import { user } from '@prisma/client';
+
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
-@ApiTags('Admin Staff')
+@ApiTags('Admin Import')
 @Controller('import')
 export class ImportController {
   constructor(private importService: ImportService) {}

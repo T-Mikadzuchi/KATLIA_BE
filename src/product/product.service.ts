@@ -90,7 +90,7 @@ export class ProductService {
       where: {
         categoryId,
         isDeleted: 0,
-      }
+      },
     });
     await this.customProductList(findProduct, productList);
   }
@@ -234,5 +234,32 @@ export class ProductService {
     await this.customProductList(findProduct, productList);
 
     return productList;
+  }
+
+  async getSaleProduct(list: any) {
+    const result: any[] = [];
+    for (const prod of list) {
+      if (prod.salePrice != null) result.push(prod);
+    }
+
+    return result;
+  }
+
+  async getSaleProductByGender(gender: string) {
+    const list = await this.getProductByGender(gender);
+    return await this.getSaleProduct(list);
+  }
+
+  async getSaleProductByCategoryId(categoryId: number) {
+    const list = await this.getProductByCategoryId(categoryId);
+    return await this.getSaleProduct(list);
+  }
+
+  async getFeedbacksForProduct(id: number) {
+    return await this.prismaService.feedback.findMany({
+      where: {
+        productId: id,
+      },
+    });
   }
 }

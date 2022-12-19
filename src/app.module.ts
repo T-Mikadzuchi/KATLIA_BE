@@ -18,6 +18,7 @@ import { StaffOrderModule } from './staff_order/staff_order.module';
 import { FilterModule } from './filter/filter.module';
 import { StaffImportModule } from './staff_import/staff_import.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -34,14 +35,15 @@ import { StatisticsModule } from './statistics/statistics.module';
     CategoryModule,
     CartModule,
     OrderModule,
+    FeedbackModule,
     DiscountModule,
     ProductAdminModule,
     AdminModule,
     StaffOrderModule,
     StaffImportModule,
     ItemsModule,
-    UserModule,
     StatisticsModule,
+    UserModule,
   ],
 })
 export class AppModule {}

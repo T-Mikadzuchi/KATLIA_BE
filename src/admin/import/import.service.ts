@@ -1,6 +1,5 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AdminService } from '../admin.service';
 import { user } from '@prisma/client';
 
 @Injectable()
