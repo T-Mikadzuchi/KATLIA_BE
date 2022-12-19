@@ -17,6 +17,7 @@ import { ProfileModule } from './profile/profile.module';
 import { StaffOrderModule } from './staff_order/staff_order.module';
 import { FilterModule } from './filter/filter.module';
 import { StaffImportModule } from './staff_import/staff_import.module';
+import { StatisticsModule } from './statistics/statistics.module';
 import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     StaffOrderModule,
     StaffImportModule,
     ItemsModule,
+    StatisticsModule,
     UserModule,
   ],
 })
