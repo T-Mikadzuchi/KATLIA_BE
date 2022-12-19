@@ -50,7 +50,7 @@ export class ProfileController {
     }
   }
   @Put('changePassword')
-  async changePassword(@GetUser() user: user, @Body() dto: ProfileDto){
+  async changePassword(@GetUser() user: user, @Body() dto: ProfileDto) {
     return await this.profileService.changePassword(user, dto);
   }
 }

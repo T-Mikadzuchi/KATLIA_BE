@@ -60,39 +60,36 @@ export class ProfileService {
     });
     return up.ava;
   }
-  async changePassword(user:user, dto:ProfileDto){
-    const userr= await this.prismaService.user.findUnique({
-      where:{
+
+  async changePassword(user: user, dto: ProfileDto) {
+    const userr = await this.prismaService.user.findUnique({
+      where: {
         id: user.id,
-      }
+      },
     });
-    
-    if(await argon.verify(userr.password, dto.oldPass)){
-      if(dto.newPass.length >=6)
-      {
-        if(dto.newPass === dto.confirmPass)
-        {
+
+    if (await argon.verify(userr.password, dto.oldPass)) {
+      if (dto.newPass.length >= 6) {
+        if (dto.newPass === dto.confirmPass) {
           const hash = await argon.hash(dto.newPass);
           await this.prismaService.user.update({
-            where:{
+            where: {
               id: user.id,
-            },data:{
-              password:hash,
-            }
+            },
+            data: {
+              password: hash,
+            },
           });
-          
+        } else {
+          throw new ForbiddenException('Confirm password incorrect!');
         }
-        else{
-          throw new ForbiddenException("Confirm password incorrect!")
-        }
+      } else {
+        throw new ForbiddenException(
+          'Password must be more than 6 characters!',
+        );
       }
-      else{
-        throw new ForbiddenException("Password must be more than 6 characters!")
-      }
+    } else {
+      throw new ForbiddenException('Old password incorrect');
     }
-    else{
-      throw new ForbiddenException("Old password incorrect")
-    }
-   
   }
 }
