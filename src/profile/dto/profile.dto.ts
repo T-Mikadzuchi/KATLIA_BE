@@ -28,5 +28,14 @@ export class ProfileDto {
 
   @ApiProperty()
   note: string;
+
+  @ApiProperty()
+  oldPass: string;
+
+  @ApiProperty()
+  newPass: string;
+
+  @ApiProperty()
+  confirmPass: string;
 }
 
