@@ -185,7 +185,8 @@ model feedback {
   orderId String
   productId Int
   username String
-  photo? String
+  photo String?
   rate Int
-  comment? String
+  comment String?
+  date DateTime
 }
