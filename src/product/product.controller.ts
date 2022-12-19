@@ -43,7 +43,13 @@ export class ProductController {
 
   @Get('getSaleProductByCategoryId/:categoryId')
   getSaleProductByCategoryId(@Param('categoryId') categoryId: string) {
-    const id = parseInt(categoryId)
-    return this.productService.getSaleProductByCategoryId(id)
+    const id = parseInt(categoryId);
+    return this.productService.getSaleProductByCategoryId(id);
+  }
+
+  @Get('getFeedbacksForProduct/:id')
+  getFeedbacksForProduct(@Param('id') id: string) {
+    const prodId = parseInt(id);
+    return this.productService.getFeedbacksForProduct(prodId);
   }
 }

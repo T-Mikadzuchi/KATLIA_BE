@@ -254,4 +254,12 @@ export class ProductService {
     const list = await this.getProductByCategoryId(categoryId);
     return await this.getSaleProduct(list);
   }
+
+  async getFeedbacksForProduct(id: number) {
+    return await this.prismaService.feedback.findMany({
+      where: {
+        productId: id,
+      },
+    });
+  }
 }

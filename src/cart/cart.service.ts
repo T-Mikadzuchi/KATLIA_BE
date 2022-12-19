@@ -178,6 +178,7 @@ export class CartService {
         unit: product.price,
         unitSale: salePrice,
         quantity: cartItem.quantity,
+        instock: item.quantity,
         total: product.price * cartItem.quantity,
         totalSale:
           salePrice != null && salePrice != 0
