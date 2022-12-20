@@ -13,7 +13,7 @@ import { FeedbackDto } from './dto';
 export class FeedbackController {
   constructor(private feedbackService: FeedbackService) {}
 
-  @Get('getOrderProductsForFeedback/:orderId')
+  @Get('getProductsForFeedback/:orderId')
   getProductsForFeedback(@GetUser() user: user, @Param('orderId') id: string) {
     return this.feedbackService.getProductsForFeedback(user, id);
   }

@@ -256,10 +256,61 @@ export class ProductService {
   }
 
   async getFeedbacksForProduct(id: number) {
-    return await this.prismaService.feedback.findMany({
+    const feedbacks = await this.prismaService.feedback.findMany({
       where: {
         productId: id,
       },
     });
+
+    const overall = await this.prismaService.feedback.aggregate({
+      where: {
+        productId: id,
+      },
+      _avg: {
+        rate: true,
+      },
+      _count: true,
+    });
+
+    let rate1 = 0;
+    let rate2 = 0;
+    let rate3 = 0;
+    let rate4 = 0;
+    let rate5 = 0;
+    let withCmt = 0;
+    let withMedia = 0;
+    for (const feedback of feedbacks) {
+      switch (feedback.rate) {
+        case 1:
+          rate1++;
+          break;
+        case 2:
+          rate2++;
+          break;
+        case 3:
+          rate3++;
+          break;
+        case 4:
+          rate4++;
+          break;
+        case 5:
+          rate5++;
+          break;
+      }
+      if (feedback.comment) withCmt++;
+      if (feedback.photo) withMedia++;
+    }
+
+    return {
+      overall,
+      rate1,
+      rate2,
+      rate3,
+      rate4,
+      rate5,
+      withCmt,
+      withMedia,
+      feedbacks,
+    };
   }
 }
