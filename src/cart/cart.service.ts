@@ -233,6 +233,7 @@ export class CartService {
       subtotalOnDiscount: subtotal - discount,
       ship,
       total: subtotal - discount + ship,
+      count,
     };
   }
 
