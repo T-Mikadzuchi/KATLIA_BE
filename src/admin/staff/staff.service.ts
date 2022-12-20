@@ -24,6 +24,9 @@ export class StaffService {
           {
             role: 'STORAGE',
           },
+          {
+            role: "ADMIN"
+          }
         ],
       },
     });
