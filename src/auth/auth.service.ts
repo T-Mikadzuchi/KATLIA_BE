@@ -88,8 +88,14 @@ export class AuthService {
       // expiresIn: '24h',
       secret: secret,
     });
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
     return {
       access_token: token,
+      role: user.role
     };
   }
 
