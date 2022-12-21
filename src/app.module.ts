@@ -19,6 +19,7 @@ import { FilterModule } from './filter/filter.module';
 import { StaffImportModule } from './staff_import/staff_import.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { MixModule } from './mix/mix.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     ItemsModule,
     StatisticsModule,
     UserModule,
+    MixModule,
   ],
 })
 export class AppModule {}
