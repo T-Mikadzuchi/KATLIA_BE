@@ -1,7 +1,7 @@
 import { FeedbackDto } from './dto/feedback.dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { user } from '@prisma/client';
+import { user, product } from '@prisma/client';
 
 @Injectable()
 export class FeedbackService {
@@ -96,4 +96,28 @@ export class FeedbackService {
     return feedbacks;
   }
 
+  async upImageForFeedback(
+    user: user,
+    orderId: string,
+    productId: number,
+    photo: string,
+  ) {
+    const find = await this.prismaService.feedback.findFirst({
+      where: {
+        orderId,
+        productId,
+      },
+    });
+    if (!find) throw new ForbiddenException('A feedback in db is required');
+
+    const update = await this.prismaService.feedback.update({
+      where: {
+        id: find.id,
+      },
+      data: {
+        photo,
+      },
+    });
+    return update;
+  }
 }
