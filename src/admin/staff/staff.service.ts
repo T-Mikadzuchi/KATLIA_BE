@@ -37,6 +37,7 @@ export class StaffService {
       for (const userr of userList) {
         if (userr.id == staff.userId) {
           List.push({
+            userId: userr.id,
             email: userr.email,
             fullname: userr.fullName,
             phoneNumber: userr.phoneNumber,
