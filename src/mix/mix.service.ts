@@ -24,7 +24,7 @@ export class MixService {
     let findAlternative = false;
     while (choose.length > 0) {
       const cate = this.getRandomFromArray(choose);
-      console.log(cate)
+      console.log(cate);
       const getProduct = await this.prismaService.product.findMany({
         where: {
           categoryId: cate,

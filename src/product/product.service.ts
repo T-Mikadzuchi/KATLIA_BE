@@ -66,6 +66,7 @@ export class ProductService {
         sold: product.sold,
         salePrice: await this.setSalePrice(product),
         image: product.defaultPic,
+        categoryId: product.categoryId
       });
     }
   }
