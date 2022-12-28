@@ -271,10 +271,19 @@ export class OrderService {
       });
     }
 
+    const feedback = await this.prismaService.feedback.findMany({
+      where: {
+        orderId: id
+      }
+    })
+
+    const isFeedback = feedback.length > 0
+
     return {
       order: ord,
       numberOfItems: numberOfItems._sum.quantity,
       itemList,
+      isFeedback
     };
   }
 }
