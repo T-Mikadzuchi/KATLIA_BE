@@ -283,8 +283,37 @@ export class StaffOrderService {
         currentSalesPrice: true,
       },
     });
+    const ListItemOrder: any[]=[];
+    for(const item of getAllItemOrder){
+      let product= await this.prismaService.product.findUnique({
+        where:{
+          productId: item.productId,
+        }
+      });
+      let productName= await product.name;
+      let color= await this.prismaService.color.findUnique({
+        where:{
+          colorId: item.colorId,
+        }
+      });
+      let colorOfItem= await color.color;
+      
+      ListItemOrder.push({
+        productId: item.productId,
+        productName: productName,
+        color: colorOfItem,
+        size: item.size,
+        unitPrice:
+        item.currentSalesPrice!=null && item.currentSalesPrice!=0
+        ? item.currentSalesPrice: item.currentPrice,
+        quatity: item.quantity,
+        total: 
+        item.currentSalesPrice!=null && item.currentSalesPrice!=0
+        ? item.currentSalesPrice*item.quantity: item.currentPrice* item.quantity,
+      });
+    }
 
-    return getAllItemOrder;
+    return ListItemOrder;
   }
   async getPriceOrder(user: user, orderId: string) {
     if (!(await this.isPermission(user)))
