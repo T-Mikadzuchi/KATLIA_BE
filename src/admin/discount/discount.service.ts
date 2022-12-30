@@ -173,4 +173,20 @@ export class DiscountService {
     });
     return 'Discount deleted';
   }
+
+  async getProductsForDiscount(user: user) {
+    if (!(await this.adminService.isAdmin(user)))
+      throw new ForbiddenException('Permission denied');
+    return await this.prismaService.product.findMany({
+      where: {
+        isDeleted: 0
+      },
+      select: {
+        productId: true,
+        name: true,
+        price: true,
+        discountId: true
+      }
+    })
+  }
 }

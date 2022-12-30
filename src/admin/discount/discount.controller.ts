@@ -66,4 +66,9 @@ export class DiscountController {
   async deleteDiscount(@GetUser() user: user, @Param('id') id: string) {
     return await this.discountService.deleteDiscount(user, id);
   }
+
+  @Get('getProductsForDiscount')
+  async getProductsForDiscount(@GetUser() user: user) {
+    return await this.discountService.getProductsForDiscount(user)
+  }
 }
