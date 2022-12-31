@@ -27,6 +27,7 @@ export class ProductAdminService {
 
       for (const product of products) {
         idList.push(product.id);
+        if (product.isDeleted == 0) {
         result.push({
           id: product.id,
           name: product.name,
@@ -38,8 +39,8 @@ export class ProductAdminService {
           categoryId: cate.categoryId,
           category: cate.category,
           gender: cate.gender,
-          isDeleted: product.isDeleted,
         });
+        }
       }
     }
     result.push({

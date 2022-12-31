@@ -38,10 +38,10 @@ export class ProductAdminController {
     return this.productAdminService.getAllProducts();
   }
 
-  @Get('getUndeletedProducts')
-  getUndeletedProducts() {
-    return this.productAdminService.getUndeletedProducts();
-  }
+  // @Get('getUndeletedProducts')
+  // getUndeletedProducts() {
+  //   return this.productAdminService.getUndeletedProducts();
+  // }
 
   @Post('addProducts')
   async addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
