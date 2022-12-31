@@ -163,6 +163,7 @@ export class MixService {
       item: {
         url: pick.url,
         name: prod.name,
+        id: prod.productId,
       },
       cate: prod.categoryId,
     };
@@ -172,7 +173,7 @@ export class MixService {
     let choose: number[] = [];
     switch (gender) {
       case 'men':
-        choose = [2];
+        choose = [2, 3];
         break;
       case 'women':
         choose = [7, 8];
@@ -237,6 +238,7 @@ export class MixService {
       item: {
         url: pick.url,
         name: prod.name,
+        id: prod.productId,
       },
       cate: prod.categoryId,
     };
@@ -246,11 +248,11 @@ export class MixService {
     let choose: number[] = [];
     switch (gender) {
       case 'men':
-        choose = [3];
+        choose = [14];
         break;
       default:
         if (cate1 == 12) choose = [9];
-        else choose = [10, 11];
+        else choose = [10, 11, 14];
         break;
     }
 
@@ -309,6 +311,7 @@ export class MixService {
       item: {
         url: pick.url,
         name: prod.name,
+        id: prod.productId,
       },
       cate: prod.categoryId,
     };
@@ -383,6 +386,7 @@ export class MixService {
       item: {
         url: pick.url,
         name: prod.name,
+        id: prod.productId,
       },
       cate: prod.categoryId,
     };
