@@ -28,18 +28,18 @@ export class ProductAdminService {
       for (const product of products) {
         idList.push(product.id);
         if (product.isDeleted == 0) {
-        result.push({
-          id: product.id,
-          name: product.name,
-          colorNumber: product.colorNumber,
-          price: product.price,
-          sold: product.sold,
-          salePrice: product.salePrice,
-          image: product.image,
-          categoryId: cate.categoryId,
-          category: cate.category,
-          gender: cate.gender,
-        });
+          result.push({
+            id: product.id,
+            name: product.name,
+            colorNumber: product.colorNumber,
+            price: product.price,
+            sold: product.sold,
+            salePrice: product.salePrice,
+            image: product.image,
+            categoryId: cate.categoryId,
+            category: cate.category,
+            gender: cate.gender,
+          });
         }
       }
     }
@@ -169,6 +169,19 @@ export class ProductAdminService {
         productId: id,
       },
     });
+
+    if (!pic) {
+      const up = await this.prismaService.product.update({
+        where: {
+          id: findProd.id,
+        },
+        data: {
+          defaultPic:
+            'https://vnpi-hcm.vn/wp-content/uploads/2018/01/no-image-800x600.png?fbclid=IwAR1_06KZS0BwWEn1lFTrcvFqdUIiPyvG5_HkOx40DJhv-eETPXSqtFjmIVQ',
+        },
+      });
+      return up;
+    }
 
     const up = await this.prismaService.product.update({
       where: {

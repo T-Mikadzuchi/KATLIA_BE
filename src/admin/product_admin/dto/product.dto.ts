@@ -24,7 +24,6 @@ export class ProductDto {
   price: number;
 
   @ApiProperty()
-  @IsNotEmpty()
   sizeList: string;
 
   @ApiProperty({

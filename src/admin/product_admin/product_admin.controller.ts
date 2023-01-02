@@ -46,6 +46,7 @@ export class ProductAdminController {
   @Post('addProducts')
   async addNewProduct(@GetUser() user: user, @Body() dto: ProductDto) {
     dto.sizeList = dto.sizeList.toUpperCase();
+    if (dto.sizeList.trim() == '') dto.sizeList = 'ONESIZE';
     return await this.productAdminService.addNewProduct(user, dto);
   }
 
