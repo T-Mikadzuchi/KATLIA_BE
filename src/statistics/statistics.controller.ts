@@ -40,8 +40,8 @@ export class StatisticsController {
   async revenuePerMonth(@GetUser() user: user, @Param('year') year: number) {
     return await this.statisticsService.revenuePerMonth(user, year);
   }
-  @Get('expenditureOfMonth')
-  async expanditureOfMonth(@GetUser() user: user) {
-    return await this.statisticsService.importOfMonth();
+  @Get('ratio')
+  async ratio(@GetUser() user: user) {
+    return await this.statisticsService.ratio(user);
   }
 }

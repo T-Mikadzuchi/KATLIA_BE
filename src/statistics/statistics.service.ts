@@ -18,6 +18,7 @@ export class StatisticsService {
     return count_user;
   }
 
+
   async newOrderOfMonth(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
@@ -38,6 +39,7 @@ export class StatisticsService {
 
     return countOrder;
   }
+
 
   async orderPercentGrowth(user: user) {
     if (!(await this.isPermission(user)))
@@ -75,6 +77,8 @@ export class StatisticsService {
     const percent = await(monthOrder / lastMonthOrder - 1) * 100;
     return percent;
   }
+
+
   async importOfMonth() {
     const today = new Date();
     const firstDayMonth = new Date(today.setDate(1));
@@ -97,7 +101,11 @@ export class StatisticsService {
 
     return importOfMonth;
   }
-  async incomeOfMonth() {
+
+
+  async revenueOfMonth(user: user) {
+    if (!(await this.isPermission(user)))
+      throw new ForbiddenException('Permission denied');
     const today = new Date();
     const firstDayMonth = new Date(today.setDate(1));
     firstDayMonth.setHours(0, 0, 0, 0);
@@ -112,46 +120,19 @@ export class StatisticsService {
         },
       },
     });
-    let incomeOfMonth = 0;
+    let revenueOfMonth = 0;
     for (const ic of incomeList) {
-      incomeOfMonth += ic.total;
-      incomeOfMonth -= ic.shippingFee;
+      revenueOfMonth += ic.total;
+      revenueOfMonth -= ic.shippingFee;
     }
 
-    return incomeOfMonth;
+    return revenueOfMonth;
   }
-  async revenueOfMonth(user: user) {
+ 
+  
+  async revenueOfLastMonth(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
-    const income = await this.incomeOfMonth();
-    const ip = await this.importOfMonth();
-    return income - ip;
-  }
-  async importOfLastMonth() {
-    const today = new Date();
-    const d = new Date();
-    d.setDate(1);
-    d.setMonth(d.getMonth() - 1);
-    const firstDayLastMonth = new Date(d);
-    firstDayLastMonth.setHours(0, 0, 0, 0);
-    const lastDayLastMonth = new Date(today.setDate(1));
-    lastDayLastMonth.setHours(0, 0, 0, 0);
-    const importList = await this.prismaSerVice.storage_import.findMany({
-      where: {
-        status: 2,
-        date: {
-          lt: new Date(lastDayLastMonth),
-          gte: new Date(firstDayLastMonth),
-        },
-      },
-    });
-    let importOfLastMonth = 0;
-    for (const ip of importList) {
-      importOfLastMonth += ip.total;
-    }
-    return importOfLastMonth;
-  }
-  async incomeOfLastMonth() {
     const today = new Date();
     const d = new Date();
     d.setDate(1);
@@ -169,19 +150,16 @@ export class StatisticsService {
         },
       },
     });
-    let incomeOfLastMonth = 0;
+    let revenueOfLastMonth = 0;
     for (const ic of incomeList) {
-      incomeOfLastMonth += ic.total;
-      incomeOfLastMonth -= ic.shippingFee;
+      revenueOfLastMonth += ic.total;
+      revenueOfLastMonth -= ic.shippingFee;
     }
 
-    return incomeOfLastMonth;
+    return revenueOfLastMonth;
   }
-  async revenueOfLastMonth(user: user) {
-    if (!(await this.isPermission(user)))
-      throw new ForbiddenException('Permission denied');
-    return (await this.incomeOfLastMonth()) - (await this.importOfLastMonth());
-  }
+ 
+
   async revenuePercentGrowth(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
@@ -189,6 +167,8 @@ export class StatisticsService {
     const last_revenue = await this.revenueOfLastMonth(user);
     return (revenue / last_revenue - 1) * 100;
   }
+
+
   async orderPerMonth(user: user, year: number) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
@@ -209,7 +189,8 @@ export class StatisticsService {
     return array;
   }
 
-  async importPerMonth(user: user, year: number) {
+  
+  async revenuePerMonth(user: user, year: number) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
     const array = new Array(12);
@@ -217,30 +198,7 @@ export class StatisticsService {
       array[i] = 0;
       const firstday = new Date(year, i, 1);
       const lastday = new Date(year, i + 1, 1);
-      const importList = await this.prismaSerVice.storage_import.findMany({
-        where: {
-          status: 2,
-          date: {
-            lt: lastday,
-            gte: firstday,
-          },
-        },
-      });
-      for (const ip of importList) {
-        array[i] += ip.total;
-      }
-    }
-    return array;
-  }
-  async incomePerMonth(user: user, year: number) {
-    if (!(await this.isPermission(user)))
-      throw new ForbiddenException('Permission denied');
-    const array = new Array(12);
-    for (let i = 0; i < 12; i++) {
-      array[i] = 0;
-      const firstday = new Date(year, i, 1);
-      const lastday = new Date(year, i + 1, 1);
-      const incomeList = await this.prismaSerVice.order_detail.findMany({
+      const revenueList = await this.prismaSerVice.order_detail.findMany({
         where: {
           status: 4,
           completedAt: {
@@ -249,23 +207,18 @@ export class StatisticsService {
           },
         },
       });
-      for (const ic of incomeList) {
+      for (const ic of revenueList) {
         array[i] += ic.total;
         array[i] -= ic.shippingFee;
       }
     }
     return array;
   }
-  async revenuePerMonth(user: user, year: number) {
+  async ratio(user: user){
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
-    const array_import = await this.importPerMonth(user, year);
-    const array_income = await this.incomePerMonth(user, year);
-    const array = new Array(12);
-    for (let i = 0; i < 12; i++) {
-      array[i] = 0;
-      array[i] = array_income[i] - array_import[i];
-    }
-    return array;
+      const expenditure= await this.importOfMonth();
+      const revenue= await this.revenueOfMonth(user);
+      return (revenue/(revenue+expenditure))*100;
   }
 }
