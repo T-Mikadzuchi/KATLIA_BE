@@ -77,10 +77,12 @@ export class OrderService {
         productId: cartItem.productId,
         image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + cartItem.size,
-        unit: product.price,
+        unit: this.productService.formatFloat(product.price),
         unitSale: salePrice,
         quantity: cartItem.quantity,
-        total: product.price * cartItem.quantity,
+        total: this.productService.formatFloat(
+          product.price * cartItem.quantity,
+        ),
         totalSale:
           salePrice != null && salePrice != 0
             ? salePrice * cartItem.quantity
@@ -117,8 +119,8 @@ export class OrderService {
               id: item.id,
             },
             data: {
-              currentPrice: item.unit,
-              currentSalesPrice: item.unitSale,
+              currentPrice: this.productService.formatFloat(item.unit),
+              currentSalesPrice: this.productService.formatFloat(item.unitSale),
             },
           });
         }
@@ -147,11 +149,11 @@ export class OrderService {
     return {
       id: cart.id,
       cartItems,
-      subtotal,
-      discount,
-      subtotalOnDiscount: subtotal - discount,
+      subtotal: this.productService.formatFloat(subtotal),
+      discount: this.productService.formatFloat(discount),
+      subtotalOnDiscount: this.productService.formatFloat(subtotal - discount),
       ship,
-      total: subtotal - discount + ship,
+      total: this.productService.formatFloat(subtotal - discount + ship),
     };
   }
 
@@ -169,7 +171,7 @@ export class OrderService {
         payment:
           dto.payment == 0 ? 'COD' : dto.payment == 1 ? 'CARD' : 'PAYPAL',
         shippingFee: order.ship,
-        total: order.total,
+        total: this.productService.formatFloat(order.total),
         note: dto.note,
         createdAt: new Date(),
         status: 1,
@@ -215,7 +217,7 @@ export class OrderService {
         createdAt: order.createdAt,
         status: order.status,
         numberOfItems: items._sum.quantity,
-        total: order.total,
+        total: this.productService.formatFloat(order.total),
       });
     }
 
@@ -260,30 +262,34 @@ export class OrderService {
         productId: item.productId,
         image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + item.size,
-        price: item.currentPrice,
-        salePrice: item.currentSalesPrice,
+        price: this.productService.formatFloat(item.currentPrice),
+        salePrice: this.productService.formatFloat(item.currentSalesPrice),
         quantity: item.quantity,
-        total: item.currentPrice * item.quantity,
+        total: this.productService.formatFloat(
+          item.currentPrice * item.quantity,
+        ),
         totalSale:
           item.currentSalesPrice != null && item.currentSalesPrice != 0
-            ? item.currentSalesPrice * item.quantity
+            ? this.productService.formatFloat(
+                item.currentSalesPrice * item.quantity,
+              )
             : null,
       });
     }
 
     const feedback = await this.prismaService.feedback.findMany({
       where: {
-        orderId: id
-      }
-    })
+        orderId: id,
+      },
+    });
 
-    const isFeedback = feedback.length > 0
+    const isFeedback = feedback.length > 0;
 
     return {
       order: ord,
       numberOfItems: numberOfItems._sum.quantity,
       itemList,
-      isFeedback
+      isFeedback,
     };
   }
 }

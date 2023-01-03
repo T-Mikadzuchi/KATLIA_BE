@@ -1,3 +1,4 @@
+import { ProductService } from './../product/product.service';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from './../prisma/prisma.service';
 import { StaffOrderDto } from './dto';
@@ -11,6 +12,7 @@ export class StaffOrderService {
     private prismaService: PrismaService,
     private mailerService: MailerService,
     private config: ConfigService,
+    private productService: ProductService,
   ) {}
 
   async isPermission(user: user) {
@@ -258,7 +260,7 @@ export class StaffOrderService {
         customerPhone: order.receiverPhone,
         address: order.address,
         createDate: order.createdAt,
-        total: order.total,
+        total: this.productService.formatFloat(order.total),
         status: order.status,
       });
     }
@@ -283,33 +285,39 @@ export class StaffOrderService {
         currentSalesPrice: true,
       },
     });
-    const ListItemOrder: any[]=[];
-    for(const item of getAllItemOrder){
-      let product= await this.prismaService.product.findUnique({
-        where:{
+    const ListItemOrder: any[] = [];
+    for (const item of getAllItemOrder) {
+      const product = await this.prismaService.product.findUnique({
+        where: {
           productId: item.productId,
-        }
+        },
       });
-      let productName= await product.name;
-      let color= await this.prismaService.color.findUnique({
-        where:{
+      const productName = await product.name;
+      const color = await this.prismaService.color.findUnique({
+        where: {
           colorId: item.colorId,
-        }
+        },
       });
-      let colorOfItem= await color.color;
-      
+      const colorOfItem = await color.color;
+
       ListItemOrder.push({
         productId: item.productId,
         productName: productName,
         color: colorOfItem,
         size: item.size,
         unitPrice:
-        item.currentSalesPrice!=null && item.currentSalesPrice!=0
-        ? item.currentSalesPrice: item.currentPrice,
+          item.currentSalesPrice != null && item.currentSalesPrice != 0
+            ? this.productService.formatFloat(item.currentSalesPrice)
+            : this.productService.formatFloat(item.currentPrice),
         quatity: item.quantity,
-        total: 
-        item.currentSalesPrice!=null && item.currentSalesPrice!=0
-        ? item.currentSalesPrice*item.quantity: item.currentPrice* item.quantity,
+        total:
+          item.currentSalesPrice != null && item.currentSalesPrice != 0
+            ? this.productService.formatFloat(
+                item.currentSalesPrice * item.quantity,
+              )
+            : this.productService.formatFloat(
+                item.currentPrice * item.quantity,
+              ),
       });
     }
 
@@ -337,10 +345,10 @@ export class StaffOrderService {
     });
     const shippingFee = order.shippingFee;
     const getprice = {
-      total: total,
+      total: this.productService.formatFloat(total),
       shippingFee: shippingFee,
-      discount: discount,
-      subtotal: total + shippingFee - discount,
+      discount: this.productService.formatFloat(discount),
+      subtotal: this.productService.formatFloat(total + shippingFee - discount),
     };
 
     return getprice;

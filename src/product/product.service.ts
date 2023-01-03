@@ -4,6 +4,10 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 @Injectable()
 export class ProductService {
   constructor(private prismaService: PrismaService) {}
+  formatFloat(num: number) {
+    return parseFloat((Math.round(num * 100) / 100).toFixed(2));
+  }
+
   async getProductColors(productId: number) {
     const productColor = await this.prismaService.product_detail.groupBy({
       by: ['productId', 'colorId'],
@@ -38,7 +42,7 @@ export class ProductService {
       });
       if (discount) salePrice = product.price * (1 - discount.percent);
     }
-    return salePrice;
+    return salePrice == null ? null : this.formatFloat(salePrice);
   }
 
   async includeDeletedByCategory(categoryId: number, productList: any) {
@@ -62,11 +66,11 @@ export class ProductService {
         id: product.productId,
         name: product.name,
         colorNumber: product.colorNumber,
-        price: product.price,
+        price: this.formatFloat(product.price),
         sold: product.sold,
         salePrice: await this.setSalePrice(product),
         image: product.defaultPic,
-        categoryId: product.categoryId
+        categoryId: product.categoryId,
       });
     }
   }
@@ -77,7 +81,7 @@ export class ProductService {
         id: product.productId,
         name: product.name,
         colorNumber: product.colorNumber,
-        price: product.price,
+        price: this.formatFloat(product.price),
         sold: product.sold,
         salePrice: await this.setSalePrice(product),
         image: product.defaultPic,
@@ -206,7 +210,7 @@ export class ProductService {
     return {
       id,
       name: product.name,
-      price: product.price,
+      price: this.formatFloat(product.price),
       salePrice,
       description: product.description,
       colorList,

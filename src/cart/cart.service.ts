@@ -175,15 +175,17 @@ export class CartService {
         productId: cartItem.productId,
         image: product.defaultPic,
         name: product.name + ' - ' + color.color + ' - ' + cartItem.size,
-        unit: product.price,
+        unit: this.productService.formatFloat(product.price),
         unitSale: salePrice,
         quantity: cartItem.quantity,
-        instock: item.quantity,
-        total: product.price * cartItem.quantity,
+        total: this.productService.formatFloat(
+          product.price * cartItem.quantity,
+        ),
         totalSale:
           salePrice != null && salePrice != 0
             ? salePrice * cartItem.quantity
             : null,
+        instock: item.quantity,
       });
     }
     return itemList;
@@ -228,11 +230,11 @@ export class CartService {
     const ship = this.setShippingFee(count);
     return {
       cartItems,
-      subtotal,
-      discount,
-      subtotalOnDiscount: subtotal - discount,
+      subtotal: this.productService.formatFloat(subtotal),
+      discount: this.productService.formatFloat(discount),
+      subtotalOnDiscount: this.productService.formatFloat(subtotal - discount),
       ship,
-      total: subtotal - discount + ship,
+      total: this.productService.formatFloat(subtotal - discount + ship),
       count,
     };
   }
