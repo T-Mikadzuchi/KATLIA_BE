@@ -1,9 +1,13 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { user } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductService } from 'src/product/product.service';
 @Injectable()
 export class StatisticsService {
-  constructor(private prismaSerVice: PrismaService) {}
+  constructor(
+    private prismaSerVice: PrismaService,
+    private productService: ProductService,
+  ) {}
   async isPermission(user: user) {
     return user.role == 'ADMIN';
   }
@@ -17,7 +21,6 @@ export class StatisticsService {
     });
     return count_user;
   }
-
 
   async newOrderOfMonth(user: user) {
     if (!(await this.isPermission(user)))
@@ -39,7 +42,6 @@ export class StatisticsService {
 
     return countOrder;
   }
-
 
   async orderPercentGrowth(user: user) {
     if (!(await this.isPermission(user)))
@@ -74,10 +76,9 @@ export class StatisticsService {
         },
       },
     });
-    const percent = await(monthOrder / lastMonthOrder - 1) * 100;
-    return percent;
+    const percent = (await (monthOrder / lastMonthOrder - 1)) * 100;
+    return this.productService.formatFloat(percent);
   }
-
 
   async importOfMonth() {
     const today = new Date();
@@ -99,9 +100,8 @@ export class StatisticsService {
       importOfMonth += ip.total;
     }
 
-    return importOfMonth;
+    return this.productService.formatFloat(importOfMonth);
   }
-
 
   async revenueOfMonth(user: user) {
     if (!(await this.isPermission(user)))
@@ -126,10 +126,9 @@ export class StatisticsService {
       revenueOfMonth -= ic.shippingFee;
     }
 
-    return revenueOfMonth;
+    return this.productService.formatFloat(revenueOfMonth);
   }
- 
-  
+
   async revenueOfLastMonth(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
@@ -156,18 +155,16 @@ export class StatisticsService {
       revenueOfLastMonth -= ic.shippingFee;
     }
 
-    return revenueOfLastMonth;
+    return this.productService.formatFloat(revenueOfLastMonth);
   }
- 
 
   async revenuePercentGrowth(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
     const revenue = await this.revenueOfMonth(user);
     const last_revenue = await this.revenueOfLastMonth(user);
-    return (revenue / last_revenue - 1) * 100;
+    return this.productService.formatFloat((revenue / last_revenue - 1) * 100);
   }
-
 
   async orderPerMonth(user: user, year: number) {
     if (!(await this.isPermission(user)))
@@ -189,7 +186,6 @@ export class StatisticsService {
     return array;
   }
 
-  
   async revenuePerMonth(user: user, year: number) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
@@ -214,11 +210,11 @@ export class StatisticsService {
     }
     return array;
   }
-  async ratio(user: user){
+  async ratio(user: user) {
     if (!(await this.isPermission(user)))
       throw new ForbiddenException('Permission denied');
-      const expenditure= await this.importOfMonth();
-      const revenue= await this.revenueOfMonth(user);
-      return (revenue/(revenue+expenditure))*100;
+    const expenditure = await this.importOfMonth();
+    const revenue = await this.revenueOfMonth(user);
+    return (revenue / (revenue + expenditure)) * 100;
   }
 }
