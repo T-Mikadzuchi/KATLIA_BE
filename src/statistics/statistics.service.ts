@@ -215,6 +215,8 @@ export class StatisticsService {
       throw new ForbiddenException('Permission denied');
     const expenditure = await this.importOfMonth();
     const revenue = await this.revenueOfMonth(user);
-    return (revenue / (revenue + expenditure)) * 100;
+    return (
+      this.productService.formatFloat(revenue / (revenue + expenditure)) * 100
+    );
   }
 }
