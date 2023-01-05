@@ -261,7 +261,7 @@ export class ProductService {
   }
 
   async getFeedbacksForProduct(id: number) {
-    const feedbacks = await this.prismaService.feedback.findMany({
+    const feedbacks: any[] = await this.prismaService.feedback.findMany({
       where: {
         productId: id,
       },
@@ -276,6 +276,7 @@ export class ProductService {
       },
       _count: true,
     });
+    overall._avg.rate = this.formatFloat(overall._avg.rate);
 
     let rate1 = 0;
     let rate2 = 0;
@@ -285,6 +286,17 @@ export class ProductService {
     let withCmt = 0;
     let withMedia = 0;
     for (const feedback of feedbacks) {
+      const ord = await this.prismaService.order_detail.findUnique({
+        where: { id: feedback.orderId },
+      });
+      const cus = await this.prismaService.customer.findUnique({
+        where: { id: ord.customerId },
+      });
+      const user = await this.prismaService.user.findUnique({
+        where: { id: cus.userId },
+      });
+      feedback.ava = user.ava;
+
       switch (feedback.rate) {
         case 1:
           rate1++;
