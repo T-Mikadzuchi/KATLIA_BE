@@ -126,6 +126,7 @@ export class MixService {
       const getProduct = await this.prismaService.product.findMany({
         where: {
           categoryId: cate,
+          isDeleted: 0,
         },
       });
       for (const prod of getProduct) {
@@ -200,6 +201,7 @@ export class MixService {
         const getProduct = await this.prismaService.product.findMany({
           where: {
             categoryId: cate,
+            isDeleted: 0,
           },
         });
         for (const prod of getProduct) {
@@ -273,6 +275,7 @@ export class MixService {
         const getProduct = await this.prismaService.product.findMany({
           where: {
             categoryId: cate,
+            isDeleted: 0,
           },
         });
         for (const prod of getProduct) {
@@ -348,6 +351,7 @@ export class MixService {
         const getProduct = await this.prismaService.product.findMany({
           where: {
             categoryId: cate,
+            isDeleted: 0,
           },
         });
         for (const prod of getProduct) {
