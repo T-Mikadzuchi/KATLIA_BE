@@ -252,6 +252,10 @@ export class MixService {
       case 'men':
         choose = [14];
         break;
+      case 'women':
+        if (cate1 == 12) choose = [9];
+        else choose = [10, 11];
+        break;
       default:
         if (cate1 == 12) choose = [9];
         else choose = [10, 11, 14];
