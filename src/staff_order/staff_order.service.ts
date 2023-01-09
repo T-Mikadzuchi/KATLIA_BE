@@ -262,6 +262,7 @@ export class StaffOrderService {
         createDate: order.createdAt,
         total: this.productService.formatFloat(order.total),
         status: order.status,
+        note: order.note,
       });
     }
     return orderList;
