@@ -200,6 +200,9 @@ export class OrderService {
           not: 0,
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const ordList: any[] = [];

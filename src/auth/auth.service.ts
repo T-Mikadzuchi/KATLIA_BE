@@ -90,12 +90,23 @@ export class AuthService {
     });
     const user = await this.prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
+    let canAccessAdminSite = false;
+    if (user.role != 'CUSTOMER') {
+      const staff = await this.prisma.staff.findUnique({
+        where: {
+          userId: user.id,
+        },
+      });
+      if (staff.status == 1 && staff.startAt < new Date())
+        canAccessAdminSite = true;
+    }
     return {
       access_token: token,
-      role: user.role
+      role: user.role,
+      canAccessAdminSite,
     };
   }
 
