@@ -169,7 +169,7 @@ export class StaffOrderService {
       },
     });
     const status = order.status;
-    if (status == 1 || status == 2) {
+    if (status == 1 || status == 2||status==3) {
       const cancel = await this.prismaService.order_detail.update({
         where: {
           id: orderId,
